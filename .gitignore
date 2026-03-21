@@ -1,0 +1,58 @@
+# ===== RISC V2 Core System — .gitignore =====
+
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+.env
+*.env.local
+.pytest_cache/
+*.log
+
+# ----- Flutter / Dart -----
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# ----- IDE -----
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ----- Docker -----
+# Don't ignore docker-compose.yml or Dockerfile
+
+# ----- Storage (large binary files) -----
+storage/
+*.zip
+*.jpg
+*.jpeg
+*.png
+*.m4a
+*.wav
+*.mp4
+*.pdf
+smart_surveyor.db
+
+# ----- Test artifacts -----
+*.pyc
+timeline_test_output.json
+server_crash.log
+
+# ----- Node (Management Dashboard) -----
+node_modules/
+.next/
