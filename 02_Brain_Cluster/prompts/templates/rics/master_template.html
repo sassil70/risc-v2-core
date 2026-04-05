@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RICS Home Survey - Level 3 Data</title>
+    <style>
+        /* A4 Print Setup */
+        @page {
+            size: A4;
+            margin: 20mm 15mm 25mm 15mm;
+            @bottom-center {
+                content: "Property: {{ property_address }} | Date: {{ inspection_date }} | Page " counter(page) " of " counter(pages);
+                font-family: "Open Sans", sans-serif;
+                font-size: 8pt;
+                color: #666;
+                border-top: 1px solid #ccc;
+                padding-top: 5mm;
+            }
+        }
+
+        /* Typography & Core */
+        body {
+            font-family: "Open Sans", Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #222;
+        }
+
+        /* RICS Branding Colors */
+        .color-rics-blue { color: #004B87; }
+        .bg-color-rics-blue { background-color: #004B87; color: white; }
+
+        /* Condition Ratings (Traffic Light System) */
+        .rating-box {
+            display: inline-block;
+            padding: 4px 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 9pt;
+        }
+        .cr-1 { background-color: #2e7d32; } /* Green: No repair/maintenance needed */
+        .cr-2 { background-color: #f57f17; } /* Amber: Defects that need repairing/replacing but not serious */
+        .cr-3 { background-color: #c62828; } /* Red: Defects that are serious and/or need to be repaired/replaced urgently */
+        .cr-ni { background-color: #bdbdbd; color: #333; } /* Not Inspected */
+
+        /* Document Structure */
+        h1, h2, h3 { font-family: "Merriweather", serif; }
+        
+        h1 { font-size: 26pt; margin-bottom: 5px; color: #004B87; }
+        h2 { font-size: 16pt; margin-top: 30px; border-bottom: 2px solid #004B87; padding-bottom: 5px; }
+        h3 { font-size: 13pt; margin-top: 20px; color: #333; border-left: 4px solid #004B87; padding-left: 10px; }
+
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 100vh;
+            text-align: center;
+            page-break-after: always;
+        }
+
+        .legal-notice {
+            font-size: 8pt;
+            color: #555;
+            text-align: justify;
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        /* Section Containers */
+        .observation-card {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .data-table th, .data-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .data-table th { background-color: #f0f4f8; font-weight: bold; color: #004B87; }
+
+        .photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .photo-item { width: 45%; }
+        .photo-item img { width: 100%; border-radius: 4px; border: 1px solid #ccc; }
+        .photo-caption { font-size: 8pt; color: #666; font-style: italic; margin-top: 5px; }
+        
+        .page-break { page-break-before: always; }
+    </style>
+</head>
+<body>
+
+    <!-- Cover Page -->
+    <div class="cover-page">
+        <div>
+            <h1>RICS Home Survey - Level 3</h1>
+            <p style="font-size: 14pt; margin-top: 0;">Building Survey Report</p>
+        </div>
+        
+        <div style="text-align: left; max-width: 400px; margin: 0 auto; border: 1px solid #004B87; padding: 20px;">
+            <p><strong>Property address:</strong><br>{{ property_address }}</p>
+            <p><strong>Client's name:</strong><br>{{ client_name }}</p>
+            <p><strong>Date of inspection:</strong><br>{{ inspection_date }}</p>
+            <p><strong>Surveyor's RICS number:</strong><br>{{ surveyor_id }}</p>
+        </div>
+        
+        <div class="legal-notice">
+            <p><strong>Important note:</strong> This report is intended solely for the person or company to whom it is addressed. It is a detailed assessment of the property's condition, produced in accordance with RICS Home Survey Standard Level 3 terms of engagement. It does not contain an assessment of market value.</p>
+        </div>
+    </div>
+
+    <!-- Section A-C: Introduction -->
+    <div class="page-break">
+        <h2>About the Inspection & Property</h2>
+        <div class="observation-card">
+            <h3>Executive Summary</h3>
+            <p>{{ executive_summary | replace('\n', '<br>') | safe }}</p>
+        </div>
+    </div>
+
+    <!-- Section E: Inside the property -->
+    <div class="page-break">
+        <h2>Section E: Inside the property</h2>
+        <p><em>Condition ratings are applied to individual elements. 1 = Green, 2 = Amber, 3 = Red.</em></p>
+        
+        {% for room in internal_rooms %}
+        <div class="observation-card">
+            <h3>{{ room.room_name }}</h3>
+            
+            {% if room.condition_rating == 1 %}
+                <div class="rating-box cr-1">Condition Rating 1 (Green)</div>
+            {% elif room.condition_rating == 2 %}
+                <div class="rating-box cr-2">Condition Rating 2 (Amber)</div>
+            {% elif room.condition_rating == 3 %}
+                <div class="rating-box cr-3">Condition Rating 3 (Red)</div>
+            {% else %}
+                <div class="rating-box cr-ni">Not Inspected</div>
+            {% endif %}
+
+            <div class="narrative">
+                {{ room.rics_narrative | replace('\n', '<br>') | safe }}
+            </div>
+            
+            {% if room.defects %}
+            <table class="data-table">
+                <tr><th>Defect Noted</th><th>Recommended Action</th></tr>
+                {% for defect in room.defects %}
+                <tr>
+                    <td>{{ defect.description }}</td>
+                    <td>{{ defect.action }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            
+            {% if room.selected_photos %}
+            <div class="photo-grid">
+                {% for photo in room.selected_photos %}
+                <div class="photo-item">
+                    <img src="file:///{{ photo.path }}" alt="Evidence for {{ room.room_name }}">
+                    <div class="photo-caption">{{ photo.caption }} ({{ photo.timestamp }})</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        {% if not internal_rooms %}
+        <p>No internal observations recorded.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

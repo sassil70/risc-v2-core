@@ -1,0 +1,73 @@
+{
+    "general": [
+        "Walls",
+        "Floor",
+        "Ceiling",
+        "Windows",
+        "Doors",
+        "Electricity",
+        "Heating",
+        "General Context"
+    ],
+    "wet_room": [
+        "Walls",
+        "Floor",
+        "Ceiling",
+        "Windows",
+        "Doors",
+        "Electricity",
+        "Heating",
+        "Plumbing",
+        "Sanitary Ware",
+        "Ventilation",
+        "General Context"
+    ],
+    "kitchen": [
+        "Walls",
+        "Floor",
+        "Ceiling",
+        "Windows",
+        "Doors",
+        "Electricity",
+        "Heating",
+        "Plumbing",
+        "White Goods",
+        "Worktops",
+        "Cabinetry",
+        "General Context"
+    ],
+    "stairs": [
+        "Stairs Structure",
+        "Banister",
+        "Walls",
+        "Ceiling",
+        "Lighting",
+        "General Context"
+    ],
+    "external": [
+        "Roof",
+        "Gutters",
+        "Walls",
+        "Windows",
+        "Doors",
+        "Gardens",
+        "Driveway",
+        "Boundary Walls",
+        "Garage",
+        "General Context"
+    ],
+    "services": [
+        "Consumer Unit",
+        "Gas Meter",
+        "Water Stopcock",
+        "Boiler",
+        "Water Tank",
+        "General Context"
+    ],
+    "attic": [
+        "Insulation",
+        "Roof Structure",
+        "Water Tank",
+        "General Context"
+    ]
+}

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RICS Survey Hub — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06060E;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --purple: #4D2D69;
+            --purple-light: #8B6AAD;
+            --gold: #D4A843;
+            --gold-dim: rgba(212, 168, 67, 0.15);
+            --green: #4CAF50;
+            --red: #F44336;
+            --text: #EAEAEA;
+            --text-sec: #8890A0;
+            --border: rgba(255,255,255,0.08);
+            --glass: rgba(255,255,255,0.04);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        .bg-glow {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        }
+        .bg-glow::before {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(77,45,105,0.25) 0%, transparent 70%);
+            top: -100px; left: -100px;
+            animation: floatA 8s ease-in-out infinite;
+        }
+        .bg-glow::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 70%);
+            bottom: -80px; right: -80px;
+            animation: floatB 10s ease-in-out infinite;
+        }
+        @keyframes floatA { 0%,100%{transform:translate(0,0)} 50%{transform:translate(60px,80px)} }
+        @keyframes floatB { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-50px,-60px)} }
+
+        /* Login Card */
+        .login-card {
+            position: relative; z-index: 1;
+            width: 420px; max-width: 92vw;
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+            animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cardIn {
+            from { opacity:0; transform: translateY(30px) scale(0.96); }
+            to { opacity:1; transform: translateY(0) scale(1); }
+        }
+
+        /* Logo area */
+        .logo-area {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .logo-icon {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(77,45,105,0.4);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,100% { box-shadow: 0 8px 32px rgba(77,45,105,0.4); }
+            50% { box-shadow: 0 8px 48px rgba(77,45,105,0.6), 0 0 20px rgba(212,168,67,0.2); }
+        }
+        .logo-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text);
+        }
+        .logo-title span { color: var(--gold); }
+        .logo-sub {
+            font-size: 12px;
+            color: var(--text-sec);
+            margin-top: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.25s;
+        }
+        .form-group input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-dim);
+            background: rgba(255,255,255,0.06);
+        }
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* Button */
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(77,45,105,0.5);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        .login-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .login-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 20px; height: 20px;
+            border: 2px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* Error */
+        .error-msg {
+            display: none;
+            background: rgba(244,67,54,0.12);
+            border: 1px solid rgba(244,67,54,0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #ff8a80;
+            animation: shake 0.4s ease;
+        }
+        .error-msg.show { display: block; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%,60% { transform: translateX(-6px); }
+            40%,80% { transform: translateX(6px); }
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 10px;
+            color: var(--text-sec);
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="login-card">
+        <div class="logo-area">
+            <div class="logo-icon">🏛</div>
+            <div class="logo-title">RICS <span>Survey Hub</span></div>
+            <div class="logo-sub">SURVEYOR PORTAL</div>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username" autocomplete="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">SIGN IN</button>
+        </form>
+
+        <div class="footer-text">RICS Level 3 Building Survey System v2.2</div>
+    </div>
+
+    <script>
+    const API = window.location.origin + '/api';
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('loginBtn');
+        const err = document.getElementById('errorMsg');
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value;
+
+        if (!user || !pass) {
+            err.textContent = 'Please enter both username and password';
+            err.classList.add('show');
+            return;
+        }
+
+        btn.classList.add('loading');
+        btn.textContent = '';
+        err.classList.remove('show');
+
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.detail || 'Invalid credentials');
+            }
+
+            const data = await res.json();
+            localStorage.setItem('rics_token', data.access_token);
+            localStorage.setItem('rics_user', JSON.stringify(data.user));
+
+            // Redirect to dashboard
+            window.location.href = '/dashboard';
+        } catch (error) {
+            err.textContent = error.message || 'Login failed. Please try again.';
+            err.classList.add('show');
+            btn.classList.remove('loading');
+            btn.textContent = 'SIGN IN';
+        }
+    }
+
+    // If already logged in, redirect
+    if (localStorage.getItem('rics_token')) {
+        window.location.href = '/dashboard';
+    }
+    </script>
+</body>
+</html>

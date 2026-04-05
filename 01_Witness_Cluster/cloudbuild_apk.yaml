@@ -1,0 +1,16 @@
+steps:
+  # 1. Build Flutter Android APK using Cirrus CI Image (contains full Android SDK)
+  - name: 'ghcr.io/cirruslabs/flutter:stable'
+    entrypoint: 'flutter'
+    args: 
+      - 'build'
+      - 'apk'
+      - '--release'
+      - '--dart-define=API_URL=https://risc-v2-brain-926489000848.europe-west1.run.app'
+
+# Save the generated APK to the existing Google Cloud Storage Bucket
+artifacts:
+  objects:
+    location: 'gs://smart-inspection-2025-risc-storage/releases/'
+    paths:
+      - 'build/app/outputs/flutter-apk/app-release.apk'

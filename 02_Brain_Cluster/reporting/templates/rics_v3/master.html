@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RICS Home Survey Level 3 - {{ project_ref }}</title>
+    <!-- We will inject styles.css verbatim or link it depending on local serving method -->
+    <style>
+        {
+            % include "rics_v3/styles.css" %
+        }
+    </style>
+    <!-- Script blocks form submissions from reloading page, handles auto-save logic -->
+    <script>
+        function autoSave(elementId, content) {
+            // This function will be triggered on blur for elements with contenteditable
+            console.log("Auto-saving " + elementId + "...");
+            // Real implementation will POST to the backend /report/save endpoint
+            // fetch('/projects/{{ project_id }}/report/save', { ... })
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                el.addEventListener('blur', function () {
+                    autoSave(this.id, this.innerHTML);
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <!-- Editor Toolbar (Invisible in PDF print) -->
+    <div class="editor-toolbar">
+        RICS WebView Editor - Auto-Saving enabled. Changes are synced live.
+        <span style="float:right;">Project: {{ project_ref }} | {{ client_name }}</span>
+    </div>
+
+    <!-- COVER PAGE -->
+    <div class="a4-page cover-page page-break">
+        <div class="cover-title-area">
+            <h1>RICS Home Survey - Level 3</h1>
+            <h2>Your survey report...</h2>
+        </div>
+
+        <div class="cover-photo">
+            <!-- Inject primary facade photo here -->
+            <h3>[Front Elevation Photo Placeholder]</h3>
+        </div>
+
+        <table class="metadata-table">
+            <tr>
+                <th>Property address</th>
+                <td id="prop_address" contenteditable="true">{{ property_address | default("Unknown Address") }}</td>
+            </tr>
+            <tr>
+                <th>Client's name</th>
+                <td id="client_name" contenteditable="true">{{ client_name }}</td>
+            </tr>
+            <tr>
+                <th>Inspection date</th>
+                <td id="inspection_date">{{ inspection_date }}</td>
+            </tr>
+            <tr>
+                <th>Surveyor's RICS number</th>
+                <td id="rics_number" contenteditable="true">#12345678</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SECTION A-C: The Executive Synthesis -->
+    <div class="a4-page page-break">
+        <h2>A. About the inspection</h2>
+        <div id="section_a_body" contenteditable="true">
+            {{ section_a | default("Surveyor details and weather conditions go here.") }}
+        </div>
+
+        <h2>B. Overall opinion</h2>
+        <div id="section_b_body" contenteditable="true">
+            {{ executive_summary | default("The AI executive summary outlining crucial structural defects and overall
+            condition.") }}
+        </div>
+
+        <h2>C. About the property</h2>
+        <div id="section_c_body" contenteditable="true">
+            {{ section_c | default("Type of property, age, construction type.") }}
+        </div>
+    </div>
+
+    <!-- SECTIONS E: Inside the property (Generative loop from JSON) -->
+    <div class="a4-page page-break">
+        <h2>E. Inside the property</h2>
+        <p>This section documents the interior condition room by room.</p>
+
+        {% for room in approved_rooms %}
+        <div class="element-row no-break">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <div class="element-title">{{ room.room_name }}</div>
+                <!-- Calculate highest condition severity for the room -->
+                <div class="element-condition cond-{{ room.highest_condition | default('1') }}-cell">
+                    {{ room.highest_condition | default('1') }}
+                </div>
+            </div>
+
+            <div id="narrative_{{ room.room_name|replace(' ', '_') }}" contenteditable="true" style="margin-top:10px;">
+                {{ room.rics_narrative | default("The AI narrative for this room was not generated.") }}
+            </div>
+
+            <!-- Room Evidence Gallery -->
+            {% if room.evidence_photos and room.evidence_photos|length > 0 %}
+            <div class="photo-gallery">
+                {% for photo in room.evidence_photos %}
+                <div class="photo-card">
+                    <!-- The SRC here requires the backend to serve static files or use absolute paths via playwright -->
+                    <img src="{{ photo.path }}" alt="{{ photo.caption }}">
+                    <div class="photo-caption" contenteditable="true">{{ photo.caption }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <hr style="border:0; border-top:1px solid #ccc; margin: 20px 0;">
+        {% endfor %}
+
+        {% if not approved_rooms %}
+        <p style="color:var(--rics-red); font-style:italic;">No rooms have been approved for this report yet. Surveyor
+            must approve rooms in the dashboard.</p>
+        {% endif %}
+    </div>
+
+    <!-- SECTIONS F-M: (Remaining boilerplates) -->
+    <div class="a4-page page-break">
+        <h2>F. Services</h2>
+        <div id="section_f_body" contenteditable="true">
+            {{ section_f | default("Electricity, Gas, Water, Heating, Drainage.") }}
+        </div>
+
+        <h2>G. Grounds</h2>
+        <div id="section_g_body" contenteditable="true">
+            {{ section_g | default("Garages, outbuildings, boundaries.") }}
+        </div>
+
+        <h2>K. Surveyor's declaration</h2>
+        <p>I confirm that I have inspected the property and prepared this report.</p>
+        <p><strong>Signed:</strong> ________________________</p>
+        <p><strong>Date:</strong> {{ report_date }}</p>
+    </div>
+
+</body>
+
+</html>

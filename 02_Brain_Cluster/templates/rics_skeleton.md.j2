@@ -1,0 +1,467 @@
+---
+project_id: "{{ project.id }}"
+reference: "{{ project.reference }}"
+client_name: "{{ project.client_name }}"
+property_address: "{{ project.address }}"
+surveyor_name: "{{ project.surveyor_name }}"
+surveyor_rics_number: "{{ project.rics_number }}"
+inspection_date: "{{ project.inspection_date }}"
+report_date: "{{ project.report_date }}"
+generated_at: "{{ generated_at }}"
+version: "{{ version }}"
+---
+
+{# ── Evidence Card Macro ── #}
+{% macro evidence_cards(photos) %}
+{% if photos %}
+<div class="evidence-grid">
+  {% for photo in photos %}
+  {% if photo.display_mode == 'evidence_card' %}
+  {# ── DEFECT EVIDENCE CARD ── #}
+  <div class="evidence-card card-defect{% if photo.condition_flag == 'CR3' %} card-cr3 card-full-width{% endif %}">
+    <img src="{{ photo.path }}" alt="{{ photo.what_shows }}" class="evidence-photo">
+    <div class="evidence-meta">
+      <span class="evidence-context">📍 {{ photo.context | replace('_', ' ') }} — {{ photo.room_name }}</span>
+      <span class="evidence-flag flag-{{ photo.condition_flag | lower }}">{{ photo.condition_flag }}</span>
+    </div>
+    <div class="evidence-annotation{% if photo.condition_flag == 'CR3' %} ann-cr3{% endif %}">
+      <span class="ann-icon">⚠️</span> {{ photo.defect_note }}
+    </div>
+    {% if photo.surveyor_quote %}
+    <div class="evidence-quote">{{ photo.surveyor_quote }}</div>
+    {% endif %}
+  </div>
+  {% elif photo.display_mode == 'annotated' %}
+  {# ── SURVEYOR QUOTE CARD ── #}
+  <div class="evidence-card card-annotated">
+    <img src="{{ photo.path }}" alt="{{ photo.what_shows }}" class="evidence-photo">
+    <div class="evidence-meta">
+      <span class="evidence-context">📍 {{ photo.context | replace('_', ' ') }} — {{ photo.room_name }}</span>
+      <span class="evidence-flag flag-{{ photo.condition_flag | lower }}">{{ photo.condition_flag }}</span>
+    </div>
+    <div class="evidence-quote">{{ photo.surveyor_quote }}</div>
+  </div>
+  {% else %}
+  {# ── SIMPLE PHOTO CARD ── #}
+  <div class="evidence-card card-simple">
+    <img src="{{ photo.path }}" alt="{{ photo.what_shows }}" class="evidence-photo">
+    <div class="evidence-meta">
+      <span class="evidence-context">{{ photo.what_shows }}</span>
+      <span class="evidence-flag flag-{{ photo.condition_flag | lower }}">{{ photo.condition_flag }}</span>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+
+<!-- COVER PAGE -->
+<div class="cover-page">
+  <div class="level-badge">LEVEL 3</div>
+  <div class="title">Your survey<br>report</div>
+  <table class="cover-info-table">
+    <tr><td>Property address</td><td>{{ project.address }}</td></tr>
+    <tr><td>Client's name</td><td>{{ project.client_name }}</td></tr>
+    <tr><td>Consultation date</td><td>{{ project.consultation_date | default('—') }}</td></tr>
+    <tr><td>Inspection date</td><td>{{ project.inspection_date }}</td></tr>
+    <tr><td>Surveyor's RICS number</td><td>{{ project.rics_number }}</td></tr>
+  </table>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page-break"></div>
+
+## Contents
+
+| Section | Title | Page |
+|---------|-------|------|
+| A | About the inspection and report | |
+| B | Overall opinion | |
+| C | About the property | |
+| D | Outside the property | |
+| E | Inside the property | |
+| F | Services | |
+| G | Grounds | |
+| H | Issues for your legal advisers | |
+| I | Risks | |
+| J | Energy matters | |
+| K | Surveyor's declaration | |
+| L | What to do now | |
+| M | Description of the RICS Home Survey | |
+
+---
+
+<!-- SECTION A: About the Inspection -->
+<div class="section-header" data-code="A" data-title="About the inspection">
+  <span class="section-code">A</span>
+  <h1>About the inspection</h1>
+</div>
+
+{{ section_a.intro | default('This RICS Home Survey – Level 3 has been produced by a surveyor, who has written this report for you to use. If you decide not to act on the advice in this report, you do so at your own risk.') }}
+
+<table class="info-table">
+  <tr><th>Surveyor</th><td>{{ project.surveyor_name }}</td></tr>
+  <tr><th>RICS member number</th><td>{{ project.rics_number }}</td></tr>
+  <tr><th>Company</th><td>{{ project.company | default('—') }}</td></tr>
+  <tr><th>Date of inspection</th><td>{{ project.inspection_date }}</td></tr>
+  <tr><th>Date of report</th><td>{{ project.report_date }}</td></tr>
+  <tr><th>Property address</th><td>{{ project.address }}</td></tr>
+  <tr><th>Weather conditions</th><td>{{ section_a.weather | default('Dry and clear at the time of inspection.') }}</td></tr>
+  <tr><th>Property status</th><td>{{ section_a.property_status | default('The property was occupied and furnished at the time of inspection.') }}</td></tr>
+</table>
+
+{{ section_a.restrictions | default('We inspect the property with reasonable care using the equipment described in section M of this report. We inspect roofs, chimneys and other surfaces on the outside of the building from ground level and, if necessary, from neighbouring public property and with the use of binoculars.') }}
+
+---
+
+<!-- SECTION B: Overall Opinion -->
+<div class="section-header" data-code="B" data-title="Overall opinion">
+  <span class="section-code">B</span>
+  <h1>Overall opinion</h1>
+</div>
+
+{{ section_b.overall_narrative | default('') }}
+
+### Condition ratings
+
+<div class="important-note">
+This section provides our overall opinion of the property, highlighting areas of concern, and summarises the condition ratings of different elements of the property.
+</div>
+
+#### Elements that require urgent attention
+
+<table class="condition-table">
+  <tr class="condition-group-header urgent">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+  {% for item in condition_ratings.urgent %}
+  <tr>
+    <td><span class="condition-rating rating-3">3</span> {{ item.code }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.comment | default('') }}</td>
+  </tr>
+  {% endfor %}
+  {% if not condition_ratings.urgent %}
+  <tr><td colspan="3"><em>No elements require urgent attention.</em></td></tr>
+  {% endif %}
+</table>
+
+#### Elements that require attention but are not serious or urgent
+
+<table class="condition-table">
+  <tr class="condition-group-header attention">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+  {% for item in condition_ratings.attention %}
+  <tr>
+    <td><span class="condition-rating rating-2">2</span> {{ item.code }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.comment | default('') }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+#### Elements with no current issues
+
+<table class="condition-table">
+  <tr class="condition-group-header ok">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+  {% for item in condition_ratings.ok %}
+  <tr>
+    <td><span class="condition-rating rating-1">1</span> {{ item.code }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.comment | default('') }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% if condition_ratings.not_inspected %}
+#### Elements not inspected
+
+<table class="condition-table">
+  <tr><th>Element no.</th><th>Element name</th><th>Comments</th></tr>
+  {% for item in condition_ratings.not_inspected %}
+  <tr>
+    <td><span class="condition-rating rating-ni">NI</span> {{ item.code }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.comment | default('') }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+### Documents to obtain
+
+<ul class="checklist">
+{% for doc in section_b.documents_to_obtain %}
+  <li>{{ doc }}</li>
+{% endfor %}
+</ul>
+
+### Further investigations
+
+{{ section_b.further_investigations | default('') }}
+
+---
+
+<!-- SECTION C: About the Property -->
+<div class="section-header" data-code="C" data-title="About the property">
+  <span class="section-code">C</span>
+  <h1>About the property</h1>
+</div>
+
+<table class="info-table">
+  <tr><th>Type of property</th><td>{{ section_c.property_type | default('—') }}</td></tr>
+  <tr><th>Approximate year of construction</th><td>{{ section_c.year_built | default('—') }}</td></tr>
+  <tr><th>Approximate year of extensions</th><td>{{ section_c.extensions | default('None noted') }}</td></tr>
+  <tr><th>Approximate year of conversions</th><td>{{ section_c.conversions | default('None noted') }}</td></tr>
+  <tr><th>Tenure</th><td>{{ section_c.tenure | default('Assumed freehold') }}</td></tr>
+  <tr><th>Number of storeys</th><td>{{ section_c.storeys | default('—') }}</td></tr>
+  <tr><th>Accommodation</th><td>{{ section_c.accommodation | default('—') }}</td></tr>
+  <tr><th>Construction</th><td>{{ section_c.construction | default('—') }}</td></tr>
+  <tr><th>Council tax band</th><td>{{ section_c.council_tax | default('—') }}</td></tr>
+  <tr><th>EPC rating</th><td>{{ section_c.epc_rating | default('—') }}</td></tr>
+</table>
+
+{{ section_c.narrative | default('') }}
+
+---
+
+<!-- SECTION D: Outside the Property -->
+<div class="section-header" data-code="D" data-title="Outside the property">
+  <span class="section-code">D</span>
+  <h1>Outside the property</h1>
+</div>
+
+<h2>Full details of elements inspected</h2>
+
+{% for element in section_d_elements %}
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">{{ element.code }}</span>
+    <span class="element-name">{{ element.name }}</span>
+    <span class="condition-rating rating-{{ element.cr_css }}">{{ element.cr_label }}</span>
+  </div>
+  <div class="element-narrative">
+    {{ element.narrative }}
+  </div>
+  {{ evidence_cards(element.evidence_photos | default(element.photos | default([]))) }}
+  {% if element.cross_refs %}
+  <div class="cross-ref">See also: {{ element.cross_refs | join(', ') }}</div>
+  {% endif %}
+</div>
+{% endfor %}
+
+---
+
+<!-- SECTION E: Inside the Property -->
+<div class="section-header" data-code="E" data-title="Inside the property">
+  <span class="section-code">E</span>
+  <h1>Inside the property</h1>
+</div>
+
+{% for element in section_e_elements %}
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">{{ element.code }}</span>
+    <span class="element-name">{{ element.name }}</span>
+    <span class="condition-rating rating-{{ element.cr_css }}">{{ element.cr_label }}</span>
+  </div>
+  <div class="element-narrative">
+    {{ element.narrative }}
+  </div>
+  {{ evidence_cards(element.evidence_photos | default(element.photos | default([]))) }}
+</div>
+{% endfor %}
+
+---
+
+<!-- SECTION F: Services -->
+<div class="section-header" data-code="F" data-title="Services">
+  <span class="section-code">F</span>
+  <h1>Services</h1>
+</div>
+
+{% for element in section_f_elements %}
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">{{ element.code }}</span>
+    <span class="element-name">{{ element.name }}</span>
+    <span class="condition-rating rating-{{ element.cr_css }}">{{ element.cr_label }}</span>
+  </div>
+  <div class="element-narrative">{{ element.narrative }}</div>
+  {{ evidence_cards(element.evidence_photos | default(element.photos | default([]))) }}
+</div>
+{% endfor %}
+
+---
+
+<!-- SECTION G: Grounds -->
+<div class="section-header" data-code="G" data-title="Grounds">
+  <span class="section-code">G</span>
+  <h1>Grounds</h1>
+</div>
+
+{% for element in section_g_elements %}
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">{{ element.code }}</span>
+    <span class="element-name">{{ element.name }}</span>
+    <span class="condition-rating rating-{{ element.cr_css }}">{{ element.cr_label }}</span>
+  </div>
+  <div class="element-narrative">{{ element.narrative }}</div>
+  {{ evidence_cards(element.evidence_photos | default(element.photos | default([]))) }}
+</div>
+{% endfor %}
+
+---
+
+<!-- SECTION H: Legal Issues -->
+<div class="section-header" data-code="H" data-title="Issues for your legal advisers">
+  <span class="section-code">H</span>
+  <h1>Issues for your legal advisers</h1>
+</div>
+
+{{ section_h.narrative | default('We are not legally qualified, and we strongly recommend that you obtain legal advice before committing to this purchase.') }}
+
+---
+
+<!-- SECTION I: Risks -->
+<div class="section-header" data-code="I" data-title="Risks">
+  <span class="section-code">I</span>
+  <h1>Risks</h1>
+</div>
+
+{{ section_i.narrative | default('') }}
+
+---
+
+<!-- SECTION J: Energy -->
+<div class="section-header" data-code="J" data-title="Energy matters">
+  <span class="section-code">J</span>
+  <h1>Energy matters</h1>
+</div>
+
+{{ section_j.narrative | default('') }}
+
+---
+
+<!-- SECTION K: Declaration -->
+<div class="section-header" data-code="K" data-title="Surveyor's declaration">
+  <span class="section-code">K</span>
+  <h1>Surveyor's declaration</h1>
+</div>
+
+**"I confirm that I have inspected the property, and I have prepared this report in line with the RICS Home Survey Standard."**
+
+| | |
+|---|---|
+| **Surveyor's RICS number** | {{ project.rics_number }} |
+| **Qualifications** | {{ project.qualifications | default('MRICS') }} |
+| **Surveyor's name** | {{ project.surveyor_name }} |
+| **Date this report was produced** | {{ project.report_date }} |
+| **Signature** | _________________________ |
+
+---
+
+<!-- SECTION L: What to do now -->
+<div class="section-header" data-code="L" data-title="What to do now">
+  <span class="section-code">L</span>
+  <h1>What to do now</h1>
+</div>
+
+{{ section_l.narrative | default('Based on our inspection findings, we recommend the following course of action. These recommendations are listed in order of priority.') }}
+
+{% if section_l.urgent_actions %}
+### Urgent — act immediately
+
+<div class="urgent-note">
+These items require immediate attention. Delay may lead to further deterioration, health risks, or increased repair costs.
+</div>
+
+<ul class="checklist">
+{% for action in section_l.urgent_actions %}
+  <li>{{ action }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if section_l.pre_purchase_actions %}
+### Before exchange of contracts
+
+<ul class="checklist">
+{% for action in section_l.pre_purchase_actions %}
+  <li>{{ action }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if section_l.ongoing_maintenance %}
+### Ongoing maintenance
+
+<ul class="checklist">
+{% for action in section_l.ongoing_maintenance %}
+  <li>{{ action }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if section_l.professional_referrals %}
+### Specialist reports required
+
+<div class="important-note">
+We strongly recommend obtaining the following specialist reports before proceeding with the purchase.
+</div>
+
+<ul class="checklist">
+{% for ref in section_l.professional_referrals %}
+  <li>{{ ref }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+---
+
+<!-- SECTION M: Description of the RICS Home Survey — Level 3 -->
+<div class="section-header" data-code="M" data-title="Description of the RICS Home Survey">
+  <span class="section-code">M</span>
+  <h1>Description of the RICS Home Survey — Level 3</h1>
+</div>
+
+{{ section_m.description }}
+
+{{ section_m.inspection_scope }}
+
+{{ section_m.condition_definitions }}
+
+{{ section_m.liability_statement }}
+
+---
+
+<!-- PHOTO INDEX -->
+<div class="section-header" data-code="" data-title="Photo Index">
+  <h1>Photo Index</h1>
+</div>
+
+{% for section_name, photos in photo_index.items() %}
+### {{ section_name }}
+
+<div class="photo-index-grid">
+{% for photo in photos %}
+  <div class="photo-index-item">
+    <img src="{{ photo.path }}" alt="Photo {{ photo.global_number }}">
+    <div class="photo-index-caption">{{ photo.global_number }} — {{ photo.date }}</div>
+  </div>
+{% endfor %}
+</div>
+{% endfor %}
+
+---
+
+<div class="rics-copyright">
+The RICS Home Survey Level 3 is reproduced with the permission of the Royal Institution of Chartered Surveyors which owns the copyright. © 2024 RICS
+</div>
+

@@ -1,0 +1,52 @@
+# RICS Home Survey - Level 3 (Building Survey) Standards Summary
+
+## 1. Scope and Level of Inspection
+- **Objective:** To provide a detailed assessment of the property's condition, identifying defects, their cause, urgency of repair, and maintenance options.
+- **Access:** Full inspection of all accessible areas, including roof spaces and cellars. Floating floorboards and inspection chambers should be lifted where feasible and safe.
+- **Reporting Style:** Professional, objective, and jargon-free (or jargon explained). Use the "Condition Rating" system (1, 2, 3).
+
+## 2. Condition Ratings
+- **Condition Rating 1 (Green):** No repair is currently needed. The property must be maintained in the normal way.
+- **Condition Rating 2 (Amber):** Defects that need repairing or replacing but are not considered to be either serious or urgent. The property must be maintained in the normal way.
+- **Condition Rating 3 (Red):** Defects that are serious and/or need to be repaired, replaced or investigated urgently.
+
+## 3. Structural Movement (Cracking)
+- **Diagnosis:** Differentiate between thermal expansion, shrinkage, settlement, and subsidence.
+- **Reporting:**
+    - Hairline cracks (<0.1mm): Usually decorative (Category 0).
+    - Fine cracks (0.1-1.0mm): Significance depends on location (Category 1).
+    - Moderate cracks (5-15mm): Serviceability issue, requires professional building work (Category 3).
+    - Severe cracks (>25mm): Structural instability risk (Category 5).
+- **Keywords:** "Step cracking", "Lintel failure", "Lateral restraint", "Foundation settlement".
+
+## 4. Dampness
+- **Types:**
+    - Rising Damp: Tide marks up to 1m, salty deposits.
+    - Penetrating Damp: High level stains, failed pointing/render.
+    - Condensation: Black mould, lack of ventilation.
+- **Action:** Recommendation for timber survey if rot is suspected. Check DPC (Damp Proof Course) bridging.
+
+## 5. Timber Defects
+- **Wet Rot:** Darker timber, cuboidal cracking, needs moisture source.
+- **Dry Rot (`Serpula lacrymans`):** Mycelium strands, fruiting bodies, highly destructive, can travel through masonry.
+- **Woodworm:** Flight holes, fresh frass indicates active infestation.
+
+## 6. Services Inspection (Visual Only)
+- **Electricity:** Check consumer unit type (RCD presence), meter condition, and apparent age of wiring (PVC vs Rubber). Recommend NICEIC test.
+- **Gas/Heating:** Visual check of boiler flue, radiator condition (leaks/rust). Recommend Gas Safe test.
+- **Plumbing:** Check pipe materials (Lead, Copper, Plastic). Look for signs of older lead pipes (soft, grey).
+
+## 7. Legal & Hazardous
+- **Asbestos:** Presume presence in textured coatings (Artex), vinyl tiles, and soffits for pre-2000 buildings.
+- **Japanese Knotweed:** Check boundaries. Red stems, shovel-shaped leaves. Structural threat.
+
+## 8. Report Structure Example
+- **Section E: Outside the Property** (Chimneys, Roofs, Walls).
+- **Section F: Inside the Property** (Ceilings, Walls, Floors).
+- **Section G: Services** (Electricity, Gas, Water).
+- **Section H: Grounds** (Garages, Borders).
+
+## 9. AI Output Guidelines
+- **Tone:** "The surveyor noted..." or Direct observation "There is...". Avoid "It looks like".
+- **Evidence:** Always reference the provided image. "The image displays..."
+- **Recommendation:** Always pair a defect with a Condition Rating and a follow-up action.

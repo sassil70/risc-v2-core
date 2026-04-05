@@ -56,3 +56,11 @@ server_crash.log
 # ----- Node (Management Dashboard) -----
 node_modules/
 .next/
+
+# ----- Local Build Dependencies (macOS SIP bypass) -----
+.build_deps/
+build_cloud_apk.sh
+native_sdk/
+
+# ----- Project Data (runtime generated, do not commit) -----
+project_data/

@@ -1,0 +1,210 @@
+/* RICS Level 3 Home Survey CSS - V3 Editable Hybrid */
+
+:root {
+  /* Brand Colors according to RICS Level 3 Palette */
+  --rics-light-blue: #E8F0FE;
+  --rics-dark-blue: #0F4A8A;
+  --rics-red: #D32F2F;
+  --text-primary: #333333;
+  --text-secondary: #555555;
+  
+  /* Condition Indicators */
+  --cond-1: #4CAF50; /* Green */
+  --cond-2: #FF9800; /* Amber */
+  --cond-3: #F44336; /* Red */
+  --cond-ni: #9E9E9E; /* Not Inspected */
+
+  --page-margin: 20mm;
+}
+
+body {
+  font-family: Arial, sans-serif; /* RICS commonly uses standard readable sans-serif */
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5; /* Subtle background for WebView Editor */
+  font-size: 11pt;
+  line-height: 1.5;
+}
+
+/* Master A4 Container for Editor View */
+.a4-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 20px auto;
+  background: white;
+  padding: var(--page-margin);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+
+/* Print Overrides for Playwright Headless PDF Export */
+@media print {
+  body {
+    background-color: white;
+  }
+  .a4-page {
+    margin: 0;
+    box-shadow: none;
+    padding: 0; /* Playwright will handle margins */
+    width: 100%;
+    min-height: 100vh;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .no-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* Editor Specific (Hide in PDF) */
+.editor-toolbar {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--rics-dark-blue);
+  color: white;
+  padding: 10px;
+  z-index: 1000;
+  font-weight: bold;
+}
+@media print {
+  .editor-toolbar { display: none !important; }
+}
+
+/* Typography Headings */
+h1, h2, h3, h4 {
+  color: var(--rics-dark-blue);
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h1 { font-size: 24pt; border-bottom: 3px solid var(--rics-dark-blue); padding-bottom: 5px; }
+h2 { font-size: 18pt; border-bottom: 2px solid var(--rics-light-blue); padding-bottom: 5px; }
+h3 { font-size: 14pt; }
+
+/* RICS Specific Layout Components */
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 250mm; /* Force fill page */
+}
+
+.cover-title-area {
+  background-color: var(--rics-light-blue);
+  padding: 30px;
+  border-left: 10px solid var(--rics-dark-blue);
+}
+
+.cover-photo {
+  width: 100%;
+  height: 200px;
+  background: #ccc;
+  border: 1px solid #999;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cover-photo img {
+  width: 100%;
+  object-fit: contain;
+}
+
+.metadata-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.metadata-table th, .metadata-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 8px;
+  text-align: left;
+}
+.metadata-table th {
+  width: 40%;
+  color: var(--rics-dark-blue);
+}
+
+/* Condition Rating Tables (Sections E, F, G) */
+.condition-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  page-break-inside: auto;
+}
+.condition-table th {
+  background: var(--rics-dark-blue);
+  color: white;
+  padding: 8px;
+  font-size: 10pt;
+}
+.condition-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: top;
+}
+.condition-table tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+/* The Elements */
+.element-row { margin-bottom: 20px; }
+.element-title { font-weight: bold; color: var(--rics-dark-blue); font-size: 12pt; }
+.element-condition { width: 15px; text-align: center; font-weight: bold; color: white;}
+
+.cond-1-cell { background-color: var(--cond-1) !important; color: white !important; font-weight: bold; text-align: center; }
+.cond-2-cell { background-color: var(--cond-2) !important; color: white !important; font-weight: bold; text-align: center;}
+.cond-3-cell { background-color: var(--cond-3) !important; color: white !important; font-weight: bold; text-align: center; }
+.cond-ni-cell { background-color: var(--cond-ni) !important; color: white !important; font-weight: bold; text-align: center;}
+
+/* Editable Text Areas */
+[contenteditable="true"] {
+  border-bottom: 1px dashed #cccccc;
+  min-height: 20px;
+  transition: background 0.2s;
+}
+[contenteditable="true"]:hover {
+  background: #fff8e1;
+  cursor: text;
+}
+[contenteditable="true"]:focus {
+  outline: 2px solid var(--rics-dark-blue);
+  background: white;
+  border-bottom: none;
+}
+@media print {
+  [contenteditable="true"] { border: none !important; }
+}
+
+/* Photo Gallery Grid */
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+.photo-card {
+  border: 1px solid #ddd;
+  padding: 5px;
+  background: white;
+  page-break-inside: avoid;
+}
+.photo-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.photo-caption {
+  font-size: 9pt;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 5px;
+}

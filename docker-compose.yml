@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # 🧠 Cluster 2: The Brain (Ingestion & Sync)
+  # ---------------------------------------------------------------------------
+  brain-api:
+    build: ./02_Brain_Cluster
+    container_name: risc_v2_brain
+    ports:
+      - "${BRAIN_PORT}:8000" # Mapped from .env
+    environment:
+      - DB_HOST=alloydb
+      - DB_USER=postgres
+      - DB_PASSWORD=risc_v2_secure_pass
+      - DB_NAME=risc_v2_db
+      - STORAGE_ROOT=/app/storage
+      # Inject User API Key
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - alloydb
+    volumes:
+      - ./storage:/app/storage # Direct Local Mount
+      - ./02_Brain_Cluster:/app # Dev Sync (Optional)
+
+  # ---------------------------------------------------------------------------
+  # 🤖 Cluster 3: AI Reporter (Gemini RAG)
+  # ---------------------------------------------------------------------------
+  reporter-api:
+    build: ./03_Reporter_Cluster
+    container_name: risc_v2_reporter
+    ports:
+      - "${REPORTER_PORT}:8000" # Mapped from .env
+    environment:
+      # Pass keys via .env file or hardcode for dev (User has .env locally)
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GEMINI_MODEL_ID=gemini-3.0-flash-001
+      - DB_HOST=alloydb
+      - STORAGE_ROOT=/app/storage # Same path as Brain
+    depends_on:
+      - brain-api # Logic dependency, not strict start-up
+    volumes:
+      - ./storage:/app/storage # Direct Local Mount (Read Access)
+      - ./03_Reporter_Cluster:/app # Dev Sync
+
+  # ---------------------------------------------------------------------------
+  # 👔 Cluster 4: Management (Dashboard)
+  # ---------------------------------------------------------------------------
+  management-web:
+    build: ./04_Management_Cluster/management_dashboard
+    container_name: risc_v2_dashboard
+    ports:
+      - "${DASHBOARD_PORT}:3000"
+    environment:
+      - NEXT_PUBLIC_REPORTER_API_URL=http://localhost:${REPORTER_PORT}/api/v2 # Client-Side reachable
+    depends_on:
+      - reporter-api
+    volumes:
+      - ./04_Management_Cluster/management_dashboard:/app
+      - /app/node_modules # Avoid overwriting node_modules
+      - ./03_Reporter_Cluster/output:/app/reports # Mount generic reports folder
+
+  # ---------------------------------------------------------------------------
+  # 🗄️ Infrastructure: AlloyDB Omni (PostgreSQL)
+  # ---------------------------------------------------------------------------
+  alloydb:
+    image: pgvector/pgvector:pg15
+    container_name: risc_v2_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: risc_v2_secure_pass
+      POSTGRES_DB: risc_v2_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./storage:/app/storage # Direct Local Mount (Visible in Windows)
+      - ./02_Brain_Cluster/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pg_data:
+    # risc_storage: Removed to force local visibility
+

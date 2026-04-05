@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # 🧠 The Brain (Sync API)
+  brain-api:
+    build: .
+    container_name: risc_v2_brain
+    ports:
+      - "8001:8000"
+    environment:
+      - DB_HOST=alloydb
+      - DB_USER=postgres
+      - DB_PASSWORD=risc_v2_secure_pass
+      - DB_NAME=risc_v2_db
+    depends_on:
+      - alloydb
+    volumes:
+      - ./storage:/app/storage # For saving uploaded packages
+
+  # 🗄️ The Memory (AlloyDB Omni / PostgreSQL)
+  alloydb:
+    image: pgvector/pgvector:pg15 # Includes vector extension required by init.sql
+    container_name: risc_v2_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: risc_v2_secure_pass
+      POSTGRES_DB: risc_v2_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Load Schema on start
+
+volumes:
+  pg_data:

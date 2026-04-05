@@ -1,0 +1,20 @@
+# Exclude everything by default
+*
+
+# Include only what is needed for Flutter Web Build
+!lib/
+!web/
+!android/
+!pubspec.yaml
+!pubspec.lock
+!analysis_options.yaml
+!Dockerfile.web
+!nginx.conf
+!cloudbuild.yaml
+!cloudbuild_apk.yaml
+
+# Re-exclude large potentials inside lib/ or web/ just in case
+**/.DS_Store
+**/*.log
+**/*.sqlite
+!assets/

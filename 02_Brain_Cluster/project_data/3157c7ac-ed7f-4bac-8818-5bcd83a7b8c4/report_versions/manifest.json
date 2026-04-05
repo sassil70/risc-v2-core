@@ -1,0 +1,20 @@
+[
+  {
+    "version_id": "v1",
+    "label": "Manual edit",
+    "timestamp": "2026-03-26T13:35:35.337256",
+    "md_path": "v1.md",
+    "pdf_path": null,
+    "is_final": false,
+    "changes_summary": "Quick save"
+  },
+  {
+    "version_id": "v2",
+    "label": "FINAL \u2014 Manual edit",
+    "timestamp": "2026-03-26T13:37:23.932131",
+    "md_path": "v2.md",
+    "pdf_path": null,
+    "is_final": true,
+    "changes_summary": "Quick save"
+  }
+]

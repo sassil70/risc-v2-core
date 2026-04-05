@@ -1,0 +1,94 @@
+
+/* 🏛️ RICS V2.1 Global Report Styles (Modern Aesthetic) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Almarai:wght@400;700&display=swap');
+
+:root {
+    --rics-primary: #003366; /* Deep Navy */
+    --rics-secondary: #C0C0C0; /* Silver */
+    --rics-accent: #D4AF37; /* Metallic Gold */
+    --condition-1: #22C55E; /* Modern Green */
+    --condition-2: #F97316; /* Modern Orange */
+    --condition-3: #EF4444; /* Modern Red */
+    --bg-white: #FFFFFF;
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+}
+
+body {
+    font-family: 'Inter', 'Almarai', sans-serif;
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* 📄 Print Configuration */
+@page {
+    size: A4;
+    margin: 20mm;
+}
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+    }
+    .page-break {
+        page-break-before: always;
+    }
+}
+
+/* 🧱 Layout Atoms */
+.report-container {
+    max-width: 210mm;
+    margin: auto;
+    background: var(--bg-white);
+}
+
+.rics-header {
+    border-bottom: 3px solid var(--rics-primary);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-c1 { background-color: var(--condition-1); color: white; }
+.badge-c2 { background-color: var(--condition-2); color: white; }
+.badge-c3 { background-color: var(--condition-3); color: white; }
+
+.forensic-card {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: #F9FAFB;
+    transition: transform 0.2s;
+}
+
+.evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.evidence-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* 🌍 Bi-directional Support */
+[dir="rtl"] {
+    font-family: 'Almarai', sans-serif;
+}

@@ -1,0 +1,65 @@
+name: witness_v2
+description: "RISC V2.0 - The Witness (Offline Inspection Module)"
+publish_to: 'none'
+version: 2.0.1+2
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # State Management
+  flutter_riverpod: ^2.5.1
+  
+  # Local Database (Offline-First)
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.20
+  path_provider: ^2.1.2
+  path: ^1.9.0
+  
+  # Sensors & Capture
+  camera: ^0.10.5+9
+  record: ^5.1.0 # Audio recording
+  permission_handler: ^11.3.0
+  http: ^1.2.0
+  
+  # Forensic Integrity
+  crypto: ^3.0.3 # For SHA-256 Hashing
+  archive: ^3.6.1 # For Zipping packages
+  uuid: ^4.3.3
+  
+  # Networking (Sync)
+  dio: ^5.4.0
+  open_filex: ^4.5.0
+  flutter_secure_storage: ^9.0.0
+  glassmorphism: ^3.0.0
+  google_fonts: ^6.1.0
+  
+  # Visuals & UX (Premium Feel)
+  flex_color_scheme: ^8.1.1
+  flutter_animate: ^4.5.0
+  animations: ^2.0.11
+  webview_flutter: ^4.13.0
+  url_launcher: ^6.2.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  
+  # Code Generation
+  drift_dev: ^2.18.0
+  build_runner: ^2.4.9
+
+
+dependency_overrides:
+  record_linux: ^1.2.0
+  archive: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/rics_contexts.json

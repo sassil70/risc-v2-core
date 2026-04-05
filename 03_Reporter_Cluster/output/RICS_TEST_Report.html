@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>/* =======================================================
+   RICS Home Survey – Level 3 — PDF Stylesheet
+   Design tokens extracted from T.pdf (51 pages)
+   Brand color: #4D2D69 (RICS Purple)
+   Page: A4 (210mm × 297mm)
+   ======================================================= */
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --rics-purple: #4D2D69;
+  --rics-purple-light: #6B4D8A;
+  --rics-dark: #231F20;
+  --rics-white: #FFFFFF;
+  --rics-gold: #D4A843;
+  --rics-bg-light: #F5F0FA;
+  
+  --rating-green: #4CAF50;
+  --rating-amber: #FF9800;
+  --rating-red: #F44336;
+  
+  --font-body: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-header: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  
+  --body-size: 10pt;
+  --h1-size: 27pt;
+  --h2-size: 20pt;
+  --h3-size: 14pt;
+  --small-size: 8pt;
+}
+
+/* ---------- Page Setup ---------- */
+@page {
+  size: A4;
+  margin: 20mm 18mm 25mm 18mm;
+  
+  @top-left {
+    content: string(section-code);
+    font-family: var(--font-header);
+    font-size: var(--h2-size);
+    font-weight: bold;
+    color: var(--rics-purple);
+    vertical-align: bottom;
+    padding-bottom: 4mm;
+  }
+  
+  @top-right {
+    content: string(section-title);
+    font-family: var(--font-body);
+    font-size: 11pt;
+    font-weight: bold;
+    color: var(--rics-purple);
+    vertical-align: bottom;
+    padding-bottom: 4mm;
+  }
+  
+  @bottom-center {
+    content: "RICS Home Survey - Level 3";
+    font-family: var(--font-body);
+    font-size: var(--small-size);
+    color: var(--rics-dark);
+  }
+  
+  @bottom-right {
+    content: counter(page);
+    font-family: var(--font-body);
+    font-size: var(--small-size);
+    color: var(--rics-dark);
+  }
+}
+
+@page :first {
+  margin-top: 0;
+  margin-bottom: 0;
+  @top-left { content: none; }
+  @top-right { content: none; }
+  @bottom-center { content: none; }
+  @bottom-right { content: none; }
+}
+
+/* ---------- Cover Page ---------- */
+.cover-page {
+  page-break-after: always;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--rics-purple) 0%, var(--rics-purple-light) 100%);
+  color: var(--rics-white);
+  padding: 40mm 25mm;
+  box-sizing: border-box;
+}
+
+.cover-page .level-badge {
+  font-size: 60pt;
+  font-weight: bold;
+  color: var(--rics-white);
+  margin-bottom: 10mm;
+}
+
+.cover-page .title {
+  font-size: 37pt;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15mm;
+}
+
+.cover-page .subtitle {
+  font-size: 22pt;
+  text-align: center;
+  margin-bottom: 20mm;
+}
+
+.cover-page .info-table {
+  width: 80%;
+  border-collapse: collapse;
+}
+
+.cover-page .info-table td {
+  padding: 3mm 5mm;
+  font-size: 12pt;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cover-page .info-table td:first-child {
+  font-weight: bold;
+  width: 50%;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- Section Headers ---------- */
+.section-header {
+  page-break-before: always;
+  background: var(--rics-purple);
+  color: var(--rics-white);
+  padding: 15mm 10mm;
+  margin: -20mm -18mm 10mm -18mm;
+  string-set: section-code attr(data-code), section-title attr(data-title);
+}
+
+.section-header h1 {
+  font-family: var(--font-header);
+  font-size: var(--h1-size);
+  font-weight: bold;
+  margin: 0;
+  color: var(--rics-white);
+}
+
+.section-header .section-code {
+  font-size: 54pt;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.4);
+  position: absolute;
+  right: 20mm;
+  top: 5mm;
+}
+
+/* ---------- Body Styles ---------- */
+body {
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  color: var(--rics-dark);
+  line-height: 1.5;
+}
+
+h1 {
+  font-family: var(--font-header);
+  font-size: var(--h1-size);
+  color: var(--rics-purple);
+  margin-top: 8mm;
+  margin-bottom: 4mm;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-family: var(--font-header);
+  font-size: var(--h2-size);
+  color: var(--rics-purple);
+  margin-top: 6mm;
+  margin-bottom: 3mm;
+  border-bottom: 2px solid var(--rics-purple);
+  padding-bottom: 2mm;
+  page-break-after: avoid;
+}
+
+h3 {
+  font-family: var(--font-header);
+  font-size: var(--h3-size);
+  color: var(--rics-purple);
+  margin-top: 4mm;
+  margin-bottom: 2mm;
+  page-break-after: avoid;
+}
+
+p {
+  margin-bottom: 3mm;
+  text-align: justify;
+}
+
+/* ---------- Condition Ratings ---------- */
+.condition-rating {
+  display: inline-block;
+  width: 8mm;
+  height: 8mm;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 8mm;
+  font-weight: bold;
+  font-size: 9pt;
+  color: white;
+  vertical-align: middle;
+  margin-right: 2mm;
+}
+
+.rating-1 { background-color: var(--rating-green); }
+.rating-2 { background-color: var(--rating-amber); }
+.rating-3 { background-color: var(--rating-red); }
+.rating-ni { background-color: #9E9E9E; }
+
+/* Condition Table */
+.condition-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4mm 0;
+  page-break-inside: avoid;
+}
+
+.condition-table th {
+  background: var(--rics-purple);
+  color: var(--rics-white);
+  padding: 2mm 3mm;
+  text-align: left;
+  font-size: 9pt;
+  font-weight: bold;
+}
+
+.condition-table td {
+  padding: 2mm 3mm;
+  border-bottom: 0.5pt solid #DDD;
+  font-size: 9pt;
+  vertical-align: middle;
+}
+
+.condition-table tr:nth-child(even) {
+  background: var(--rics-bg-light);
+}
+
+.condition-group-header {
+  background: var(--rics-purple) !important;
+  color: var(--rics-white) !important;
+  font-weight: bold;
+  font-size: 10pt;
+  padding: 3mm !important;
+}
+
+.condition-group-header.urgent { background: var(--rating-red) !important; }
+.condition-group-header.attention { background: var(--rating-amber) !important; }
+.condition-group-header.ok { background: var(--rating-green) !important; }
+
+/* ---------- Element Sections ---------- */
+.element-block {
+  margin-bottom: 8mm;
+  page-break-inside: avoid;
+}
+
+.element-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3mm;
+}
+
+.element-code {
+  font-weight: bold;
+  font-size: 12pt;
+  color: var(--rics-purple);
+  margin-right: 3mm;
+}
+
+.element-name {
+  font-weight: bold;
+  font-size: 12pt;
+  color: var(--rics-dark);
+}
+
+.element-narrative {
+  text-align: justify;
+  line-height: 1.6;
+}
+
+/* ---------- Evidence Photos ---------- */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3mm;
+  margin: 4mm 0;
+}
+
+.photo-item {
+  width: 48%;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+.photo-item img {
+  width: 100%;
+  max-height: 80mm;
+  object-fit: contain;
+  border: 0.5pt solid #DDD;
+}
+
+.photo-caption {
+  font-size: 7pt;
+  color: #666;
+  margin-top: 1mm;
+}
+
+/* ---------- Photo Index ---------- */
+.photo-index-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2mm;
+  margin: 3mm 0;
+}
+
+.photo-index-item {
+  width: 30%;
+  text-align: center;
+  margin-bottom: 3mm;
+  page-break-inside: avoid;
+}
+
+.photo-index-item img {
+  width: 100%;
+  max-height: 50mm;
+  object-fit: contain;
+  border: 0.5pt solid #CCC;
+}
+
+.photo-index-caption {
+  font-size: 6pt;
+  color: #888;
+}
+
+/* ---------- Info Tables ---------- */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4mm 0;
+}
+
+.info-table td, .info-table th {
+  padding: 2mm 4mm;
+  border: 0.5pt solid #DDD;
+  font-size: 9pt;
+  vertical-align: top;
+}
+
+.info-table th {
+  background: var(--rics-bg-light);
+  font-weight: bold;
+  color: var(--rics-purple);
+  text-align: left;
+}
+
+/* ---------- Documents/Investigations List ---------- */
+.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.checklist li {
+  padding: 2mm 0 2mm 8mm;
+  position: relative;
+  border-bottom: 0.5pt solid #EEE;
+  font-size: 9pt;
+}
+
+.checklist li::before {
+  content: "☐";
+  position: absolute;
+  left: 0;
+  color: var(--rics-purple);
+  font-weight: bold;
+}
+
+/* ---------- Cross References ---------- */
+.cross-ref {
+  font-style: italic;
+  color: var(--rics-purple-light);
+  font-size: 8pt;
+}
+
+/* ---------- Warning/Important Boxes ---------- */
+.important-note {
+  background: #FFF3E0;
+  border-left: 4mm solid var(--rating-amber);
+  padding: 3mm 4mm;
+  margin: 4mm 0;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+
+.urgent-note {
+  background: #FFEBEE;
+  border-left: 4mm solid var(--rating-red);
+  padding: 3mm 4mm;
+  margin: 4mm 0;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+
+/* ---------- Terms and Appendices ---------- */
+.terms-section {
+  font-size: 8pt;
+  line-height: 1.4;
+}
+
+/* ---------- Footer/Copyright ---------- */
+.rics-copyright {
+  font-size: 7pt;
+  color: #999;
+  text-align: center;
+  margin-top: 10mm;
+}
+
+/* ---------- Page Breaks ---------- */
+.page-break { page-break-after: always; }
+.no-break { page-break-inside: avoid; }
+</style></head>
+<body><hr />
+<p>project_id: "TEST-001"
+reference: "KMT-TEST"
+client_name: "Mr. John Smith"
+property_address: "10 Manor Road, London, HA1 2PB"
+surveyor_name: "Salim B. Assil MRICS"
+surveyor_rics_number: "1234567"
+inspection_date: "15th March 2026"
+report_date: "18th March 2026"
+generated_at: "2026-03-18"
+version: "v1_test"</p>
+<hr />
+<!-- COVER PAGE -->
+<div class="cover-page">
+  <div class="level-badge">LEVEL 3</div>
+  <div class="title">Your survey<br>report</div>
+  <table class="info-table">
+    <tr><td>Property address</td><td>10 Manor Road, London, HA1 2PB</td></tr>
+    <tr><td>Client's name</td><td>Mr. John Smith</td></tr>
+    <tr><td>Consultation date</td><td>12th March 2026</td></tr>
+    <tr><td>Inspection date</td><td>15th March 2026</td></tr>
+    <tr><td>Surveyor's RICS number</td><td>1234567</td></tr>
+  </table>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page-break"></div>
+
+<h2>Contents</h2>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Title</th>
+<th>Page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>About the inspection and report</td>
+<td></td>
+</tr>
+<tr>
+<td>B</td>
+<td>Overall opinion</td>
+<td></td>
+</tr>
+<tr>
+<td>C</td>
+<td>About the property</td>
+<td></td>
+</tr>
+<tr>
+<td>D</td>
+<td>Outside the property</td>
+<td></td>
+</tr>
+<tr>
+<td>E</td>
+<td>Inside the property</td>
+<td></td>
+</tr>
+<tr>
+<td>F</td>
+<td>Services</td>
+<td></td>
+</tr>
+<tr>
+<td>G</td>
+<td>Grounds</td>
+<td></td>
+</tr>
+<tr>
+<td>H</td>
+<td>Issues for your legal advisers</td>
+<td></td>
+</tr>
+<tr>
+<td>I</td>
+<td>Risks</td>
+<td></td>
+</tr>
+<tr>
+<td>J</td>
+<td>Energy matters</td>
+<td></td>
+</tr>
+<tr>
+<td>K</td>
+<td>Surveyor's declaration</td>
+<td></td>
+</tr>
+<tr>
+<td>L</td>
+<td>What to do now</td>
+<td></td>
+</tr>
+<tr>
+<td>M</td>
+<td>Description of the RICS Home Survey</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<!-- SECTION A: About the Inspection -->
+<div class="section-header" data-code="A" data-title="About the inspection">
+  <span class="section-code">A</span>
+  <h1>About the inspection</h1>
+</div>
+
+<p>This RICS Home Survey – Level 3 has been produced by a surveyor.</p>
+<table class="info-table">
+  <tr><th>Surveyor</th><td>Salim B. Assil MRICS</td></tr>
+  <tr><th>RICS member number</th><td>1234567</td></tr>
+  <tr><th>Company</th><td>RISC Survey Ltd</td></tr>
+  <tr><th>Date of inspection</th><td>15th March 2026</td></tr>
+  <tr><th>Date of report</th><td>18th March 2026</td></tr>
+  <tr><th>Property address</th><td>10 Manor Road, London, HA1 2PB</td></tr>
+  <tr><th>Weather conditions</th><td>Dry and clear.</td></tr>
+  <tr><th>Property status</th><td>Occupied and furnished.</td></tr>
+</table>
+
+<p>Visual inspection carried out with reasonable care.</p>
+<hr />
+<!-- SECTION B: Overall Opinion -->
+<div class="section-header" data-code="B" data-title="Overall opinion">
+  <span class="section-code">B</span>
+  <h1>Overall opinion</h1>
+</div>
+
+<p>The property is a 1935 semi-detached house in fair condition.</p>
+<h3>Condition ratings</h3>
+<div class="important-note">
+This section provides our overall opinion of the property, highlighting areas of concern, and summarises the condition ratings of different elements of the property.
+</div>
+
+<h4>Elements that require urgent attention</h4>
+<table class="condition-table">
+  <tr class="condition-group-header urgent">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-3">3</span> E1</td>
+    <td>Roof structure</td>
+    <td>Inadequate supports</td>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-3">3</span> F1</td>
+    <td>Electricity</td>
+    <td>Outdated consumer unit</td>
+  </tr>
+
+
+</table>
+
+<h4>Elements that require attention but are not serious or urgent</h4>
+<table class="condition-table">
+  <tr class="condition-group-header attention">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-2">2</span> D1</td>
+    <td>Chimney stacks</td>
+    <td>Leaning pots</td>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-2">2</span> D2</td>
+    <td>Roof coverings</td>
+    <td>Ridge repair needed</td>
+  </tr>
+
+</table>
+
+<h4>Elements with no current issues</h4>
+<table class="condition-table">
+  <tr class="condition-group-header ok">
+    <th>Element no.</th><th>Element name</th><th>Comments</th>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-1">1</span> E2</td>
+    <td>Ceilings</td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td><span class="condition-rating rating-1">1</span> E4</td>
+    <td>Floors</td>
+    <td></td>
+  </tr>
+
+</table>
+
+<h4>Elements not inspected</h4>
+<table class="condition-table">
+  <tr><th>Element no.</th><th>Element name</th><th>Comments</th></tr>
+
+  <tr>
+    <td><span class="condition-rating rating-ni">NI</span> D9</td>
+    <td>Other</td>
+    <td>Not accessible</td>
+  </tr>
+
+</table>
+
+<h3>Documents to obtain</h3>
+<ul class="checklist">
+
+  <li>ASBESTOS SURVEY</li>
+
+  <li>ELECTRICAL TESTING (EICR)</li>
+
+  <li>GAS CERTIFICATION</li>
+
+</ul>
+
+<h3>Further investigations</h3>
+<p>A damp specialist and electrician should inspect the property.</p>
+<hr />
+<!-- SECTION C: About the Property -->
+<div class="section-header" data-code="C" data-title="About the property">
+  <span class="section-code">C</span>
+  <h1>About the property</h1>
+</div>
+
+<table class="info-table">
+  <tr><th>Type of property</th><td>Semi-detached house</td></tr>
+  <tr><th>Approximate year of construction</th><td>1935</td></tr>
+  <tr><th>Approximate year of extensions</th><td>None noted</td></tr>
+  <tr><th>Approximate year of conversions</th><td>None noted</td></tr>
+  <tr><th>Tenure</th><td>Freehold</td></tr>
+  <tr><th>Number of storeys</th><td>Two</td></tr>
+  <tr><th>Accommodation</th><td>3 bed, 1 bath</td></tr>
+  <tr><th>Construction</th><td>Solid brick</td></tr>
+  <tr><th>Council tax band</th><td>E</td></tr>
+  <tr><th>EPC rating</th><td>D</td></tr>
+</table>
+
+<p>A 1930s suburban property.</p>
+<hr />
+<!-- SECTION D: Outside the Property -->
+<div class="section-header" data-code="D" data-title="Outside the property">
+  <span class="section-code">D</span>
+  <h1>Outside the property</h1>
+</div>
+
+<h2>Full details of elements inspected</h2>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">D1</span>
+    <span class="element-name">Chimney stacks</span>
+    <span class="condition-rating rating-2">2</span>
+  </div>
+  <div class="element-narrative">
+    Two chimney stacks were noted. Pots on the party wall stack show leaning. Covers/cowls recommended.
+  </div>
+
+
+  <div class="cross-ref">See also: H — Party wall</div>
+
+</div>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">D2</span>
+    <span class="element-name">Roof coverings</span>
+    <span class="condition-rating rating-2">2</span>
+  </div>
+  <div class="element-narrative">
+    Clay tiles in serviceable condition. Ridge tiles need rebedding.
+  </div>
+
+
+</div>
+
+<hr />
+<!-- SECTION E: Inside the Property -->
+<div class="section-header" data-code="E" data-title="Inside the property">
+  <span class="section-code">E</span>
+  <h1>Inside the property</h1>
+</div>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">E1</span>
+    <span class="element-name">Roof structure</span>
+    <span class="condition-rating rating-3">3</span>
+  </div>
+  <div class="element-narrative">
+    Traditional timber frame. Concern with bolt connections. Structural engineer advised.
+  </div>
+
+</div>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">E2</span>
+    <span class="element-name">Ceilings</span>
+    <span class="condition-rating rating-1">1</span>
+  </div>
+  <div class="element-narrative">
+    Plaster on lath. Satisfactory condition throughout.
+  </div>
+
+</div>
+
+<hr />
+<!-- SECTION F: Services -->
+<div class="section-header" data-code="F" data-title="Services">
+  <span class="section-code">F</span>
+  <h1>Services</h1>
+</div>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">F1</span>
+    <span class="element-name">Electricity</span>
+    <span class="condition-rating rating-3">3</span>
+  </div>
+  <div class="element-narrative">Dated consumer unit without full RCD protection. EICR recommended.</div>
+
+</div>
+
+<hr />
+<!-- SECTION G: Grounds -->
+<div class="section-header" data-code="G" data-title="Grounds">
+  <span class="section-code">G</span>
+  <h1>Grounds</h1>
+</div>
+
+<div class="element-block">
+  <div class="element-header">
+    <span class="element-code">G1</span>
+    <span class="element-name">Garage</span>
+    <span class="condition-rating rating-2">2</span>
+  </div>
+  <div class="element-narrative">Attached garage. Flat roof approaching end of life.</div>
+
+</div>
+
+<hr />
+<!-- SECTION H: Legal Issues -->
+<div class="section-header" data-code="H" data-title="Issues for your legal advisers">
+  <span class="section-code">H</span>
+  <h1>Issues for your legal advisers</h1>
+</div>
+
+<p>Consult legal advisor on party wall and extension approvals.</p>
+<hr />
+<!-- SECTION I: Risks -->
+<div class="section-header" data-code="I" data-title="Risks">
+  <span class="section-code">I</span>
+  <h1>Risks</h1>
+</div>
+
+<p>1930s property — asbestos survey recommended. No flood risk.</p>
+<hr />
+<!-- SECTION J: Energy -->
+<div class="section-header" data-code="J" data-title="Energy matters">
+  <span class="section-code">J</span>
+  <h1>Energy matters</h1>
+</div>
+
+<p>EPC D (58). Improve with loft insulation and modern boiler.</p>
+<hr />
+<!-- SECTION K: Declaration -->
+<div class="section-header" data-code="K" data-title="Surveyor's declaration">
+  <span class="section-code">K</span>
+  <h1>Surveyor's declaration</h1>
+</div>
+
+<p><strong>"I confirm that I have inspected the property, and I have prepared this report in line with the RICS Home Survey Standard."</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Surveyor's RICS number</strong></td>
+<td>1234567</td>
+</tr>
+<tr>
+<td><strong>Qualifications</strong></td>
+<td>MRICS</td>
+</tr>
+<tr>
+<td><strong>Surveyor's name</strong></td>
+<td>Salim B. Assil MRICS</td>
+</tr>
+<tr>
+<td><strong>Date this report was produced</strong></td>
+<td>18th March 2026</td>
+</tr>
+<tr>
+<td><strong>Signature</strong></td>
+<td><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>____</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<!-- PHOTO INDEX -->
+<div class="section-header" data-code="" data-title="Photo Index">
+  <h1>Photo Index</h1>
+</div>
+
+<hr />
+<div class="rics-copyright">
+The RICS Home Survey Level 3 is reproduced with the permission of the Royal Institution of Chartered Surveyors which owns the copyright. © 2020 RICS
+</div></body></html>

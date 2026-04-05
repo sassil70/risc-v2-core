@@ -1,0 +1,67 @@
+<!-- E. Inside the Property Content -->
+<div class="mod-section-e">
+
+    <!-- E2 Ceilings -->
+    <div class="element-block">
+        <div class="element-title">
+            <span>E2 Ceilings</span>
+        </div>
+        {% if e_ceilings_list %}
+        {% for item in e_ceilings_list %}
+        <div class="room-finding"
+            style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; margin-top: 15px;">
+            <p style="color: #003366; font-weight: bold; margin-bottom: 5px;">📍 {{ item.room_name }}</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <p style="flex-grow: 1; margin-right: 20px;">{{ item.description }}</p>
+                <span class="condition-box c{{ item.rating }}">Condition {{ item.rating }}</span>
+            </div>
+
+            <div class="evidence-gallery" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                {% if item.photos %}
+                {% for photo in item.photos %}
+                <img src="{{ photo }}" alt="Evidence" style="width: 250px; border-radius: 4px; border: 1px solid #ddd;">
+                {% endfor %}
+                {% else %}
+                <div
+                    style="background: #fdf2f2; color: #9b1c1c; padding: 10px; border-radius: 4px; font-size: 0.85em; border: 1px solid #f8d7da; width: 100%;">
+                    ⚠️ No photographic evidence extracted for this specific room finding.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="ni-text">No ceilings inspected or mapped in this property.</p>
+        {% endif %}
+    </div>
+
+    <!-- E3 Walls and Partitions -->
+    <div class="element-block">
+        <div class="element-title">
+            <span>E3 Walls and Partitions</span>
+        </div>
+        {% if e_walls_list %}
+        {% for item in e_walls_list %}
+        <div class="room-finding"
+            style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; margin-top: 15px;">
+            <p style="color: #003366; font-weight: bold; margin-bottom: 5px;">📍 {{ item.room_name }}</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <p style="flex-grow: 1; margin-right: 20px;">{{ item.description }}</p>
+                <span class="condition-box c{{ item.rating }}">Condition {{ item.rating }}</span>
+            </div>
+
+            <div class="evidence-gallery" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                {% if item.photos %}
+                {% for photo in item.photos %}
+                <img src="{{ photo }}" alt="Evidence" style="width: 250px; border-radius: 4px; border: 1px solid #ddd;">
+                {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="ni-text">No walls inspected or mapped.</p>
+        {% endif %}
+    </div>
+
+</div>

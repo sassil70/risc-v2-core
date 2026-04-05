@@ -1,0 +1,167 @@
+/* 🏛️ RICS Level 3 Standard Styles sheet */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --rics-red: #D32F2F;
+    --rics-black: #212121;
+    --rics-gray: #757575;
+    --rics-light-gray: #F5F5F5;
+    --section-header-bg: #EEEEEE;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--rics-black);
+    line-height: 1.5;
+    background: #525659;
+    /* Application background like Acrobat */
+    margin: 0;
+}
+
+.page {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 20px auto;
+    padding: 20mm;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    box-sizing: border-box;
+}
+
+@media print {
+    body {
+        background: white;
+        margin: 0;
+    }
+
+    .page {
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* RICS Header Structure */
+.rics-section-header {
+    background-color: var(--rics-black);
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rics-main-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--rics-black);
+    text-transform: uppercase;
+    border-bottom: 4px solid var(--rics-red);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+/* Section Indicators */
+.section-letter {
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.2);
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+
+/* Condition Ratings */
+.condition-box {
+    display: inline-block;
+    padding: 5px 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.c1 {
+    background: #4CAF50;
+}
+
+/* Green */
+.c2 {
+    background: #FF9800;
+}
+
+/* Orange */
+.c3 {
+    background: #F44336;
+}
+
+/* Red */
+.ni {
+    background: #9E9E9E;
+}
+
+/* Not Inspected */
+
+/* Table Styles */
+.rics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.rics-table th {
+    text-align: left;
+    background: var(--section-header-bg);
+    padding: 10px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--rics-black);
+}
+
+.rics-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+/* Layout for Elements */
+.element-block {
+    margin-bottom: 30px;
+    page-break-inside: avoid;
+}
+
+.element-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--rics-gray);
+    padding-bottom: 5px;
+}
+
+.photo-gallery {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.photo-item {
+    width: 32%;
+    border: 1px solid #ccc;
+    padding: 2px;
+}
+
+.photo-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}

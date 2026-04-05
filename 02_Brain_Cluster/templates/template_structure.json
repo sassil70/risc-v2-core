@@ -1,0 +1,1000 @@
+{
+  "total_pages": 51,
+  "headers": [
+    {
+      "page": 1,
+      "text": "LEVEL 3",
+      "font": "CIDFont+F1",
+      "size": 16.0,
+      "color": "#FFFFFF",
+      "bbox": [
+        350.6,
+        260.7,
+        418.2,
+        278.5
+      ]
+    },
+    {
+      "page": 1,
+      "text": "Your survey",
+      "font": "CIDFont+F2",
+      "size": 37.0,
+      "color": "#FFFFFF",
+      "bbox": [
+        350.6,
+        279.7,
+        574.6,
+        321.0
+      ]
+    },
+    {
+      "page": 1,
+      "text": "report...",
+      "font": "CIDFont+F2",
+      "size": 37.0,
+      "color": "#FFFFFF",
+      "bbox": [
+        350.6,
+        322.3,
+        498.5,
+        363.6
+      ]
+    },
+    {
+      "page": 2,
+      "text": "Contents",
+      "font": "CIDFont+F2",
+      "size": 21.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.6,
+        107.2,
+        176.4,
+        130.7
+      ]
+    },
+    {
+      "page": 3,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        95.0,
+        548.8,
+        121.8
+      ]
+    },
+    {
+      "page": 3,
+      "text": "About the inspection",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4C2F69",
+      "bbox": [
+        85.1,
+        305.7,
+        333.7,
+        333.6
+      ]
+    },
+    {
+      "page": 4,
+      "text": "About the survey",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        106.1,
+        248.3,
+        128.4
+      ]
+    },
+    {
+      "page": 6,
+      "text": "About the inspection",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        106.1,
+        283.9,
+        128.4
+      ]
+    },
+    {
+      "page": 7,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        85.7,
+        548.8,
+        112.5
+      ]
+    },
+    {
+      "page": 7,
+      "text": "Overall opinion",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        296.5,
+        273.9,
+        324.3
+      ]
+    },
+    {
+      "page": 8,
+      "text": "Summary of condition ratings",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        84.8,
+        106.1,
+        373.8,
+        128.4
+      ]
+    },
+    {
+      "page": 9,
+      "text": "Condition ratings",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        255.9,
+        128.4
+      ]
+    },
+    {
+      "page": 10,
+      "text": "Condition ratings",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        96.2,
+        255.9,
+        118.6
+      ]
+    },
+    {
+      "page": 11,
+      "text": "Condition ratings",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        78.9,
+        255.9,
+        101.3
+      ]
+    },
+    {
+      "page": 12,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        147.7,
+        548.8,
+        174.5
+      ]
+    },
+    {
+      "page": 12,
+      "text": "About the property",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        338.4,
+        316.8,
+        366.2
+      ]
+    },
+    {
+      "page": 13,
+      "text": "About the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        270.5,
+        128.4
+      ]
+    },
+    {
+      "page": 15,
+      "text": "Energy efficiency",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        84.7,
+        106.1,
+        255.8,
+        128.4
+      ]
+    },
+    {
+      "page": 16,
+      "text": "Location and facilities",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        300.4,
+        128.4
+      ]
+    },
+    {
+      "page": 17,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        104.4,
+        548.8,
+        131.2
+      ]
+    },
+    {
+      "page": 17,
+      "text": "Outside the property",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        84.5,
+        322.9,
+        337.2,
+        350.7
+      ]
+    },
+    {
+      "page": 18,
+      "text": "Outside the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        288.5,
+        128.4
+      ]
+    },
+    {
+      "page": 19,
+      "text": "Outside the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        288.5,
+        128.4
+      ]
+    },
+    {
+      "page": 20,
+      "text": "Outside the proerty",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        276.3,
+        128.4
+      ]
+    },
+    {
+      "page": 21,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.7,
+        548.8,
+        135.5
+      ]
+    },
+    {
+      "page": 21,
+      "text": "Inside the property",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        323.3,
+        316.8,
+        351.1
+      ]
+    },
+    {
+      "page": 22,
+      "text": "Inside the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        271.8,
+        128.4
+      ]
+    },
+    {
+      "page": 23,
+      "text": "Inside the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        271.8,
+        128.4
+      ]
+    },
+    {
+      "page": 24,
+      "text": "Inside the property",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        271.8,
+        128.4
+      ]
+    },
+    {
+      "page": 25,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 25,
+      "text": "Services",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        194.6,
+        327.2
+      ]
+    },
+    {
+      "page": 26,
+      "text": "Services",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        174.2,
+        128.4
+      ]
+    },
+    {
+      "page": 27,
+      "text": "Services",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        174.2,
+        128.4
+      ]
+    },
+    {
+      "page": 28,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 28,
+      "text": "Grounds",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        195.9,
+        327.2
+      ]
+    },
+    {
+      "page": 28,
+      "text": "(including shared areas for flats",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        335.4,
+        464.2,
+        363.2
+      ]
+    },
+    {
+      "page": 29,
+      "text": "Grounds (including shared areas for flats)",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        86.3,
+        106.1,
+        490.8,
+        128.4
+      ]
+    },
+    {
+      "page": 30,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 30,
+      "text": "Issues for your legal advisers",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        443.4,
+        327.2
+      ]
+    },
+    {
+      "page": 31,
+      "text": "Issues for your legal advisers",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        371.7,
+        128.4
+      ]
+    },
+    {
+      "page": 32,
+      "text": "Issues for your legal advisers",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        371.7,
+        128.4
+      ]
+    },
+    {
+      "page": 33,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 33,
+      "text": "Risks",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        158.5,
+        327.2
+      ]
+    },
+    {
+      "page": 34,
+      "text": "Risks",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        143.9,
+        128.4
+      ]
+    },
+    {
+      "page": 35,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 35,
+      "text": "Energy matters",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        273.8,
+        327.2
+      ]
+    },
+    {
+      "page": 36,
+      "text": "Energy matters",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        108.0,
+        108.3,
+        253.6,
+        130.7
+      ]
+    },
+    {
+      "page": 37,
+      "text": "Surveyor\u2019s declaration",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        450.6,
+        361.4,
+        478.4
+      ]
+    },
+    {
+      "page": 38,
+      "text": "Surveyor\u2019s declaration",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        306.2,
+        128.4
+      ]
+    },
+    {
+      "page": 39,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 39,
+      "text": "What to do now",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        277.9,
+        327.2
+      ]
+    },
+    {
+      "page": 40,
+      "text": "Further investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        485.1,
+        128.4
+      ]
+    },
+    {
+      "page": 41,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 41,
+      "text": "Description of the RICS Home Survey",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        537.7,
+        327.2
+      ]
+    },
+    {
+      "page": 41,
+      "text": "\u2013 Level 3 service and terms of",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        335.1,
+        447.6,
+        363.0
+      ]
+    },
+    {
+      "page": 41,
+      "text": "engagement",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        371.1,
+        239.3,
+        399.0
+      ]
+    },
+    {
+      "page": 42,
+      "text": "Description of the RICS Home Survey \u2013 Level 3",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        537.4,
+        128.4
+      ]
+    },
+    {
+      "page": 42,
+      "text": "service and terms of engagement",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        131.0,
+        408.4,
+        153.4
+      ]
+    },
+    {
+      "page": 44,
+      "text": "Description of the RICS Home Survey \u2013 Level 3",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        94.4,
+        537.4,
+        116.8
+      ]
+    },
+    {
+      "page": 44,
+      "text": "service and terms of engagement",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        119.3,
+        408.4,
+        141.6
+      ]
+    },
+    {
+      "page": 46,
+      "text": "Description of the RICS Home Survey \u2013 Level 3",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        94.4,
+        537.4,
+        116.8
+      ]
+    },
+    {
+      "page": 46,
+      "text": "service and terms of engagement",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        119.3,
+        402.8,
+        141.6
+      ]
+    },
+    {
+      "page": 47,
+      "text": "Description of the RICS Home Survey \u2013 Level 3",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        105.6,
+        544.2,
+        127.9
+      ]
+    },
+    {
+      "page": 47,
+      "text": "service and terms of engagement",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        128.3,
+        408.4,
+        150.6
+      ]
+    },
+    {
+      "page": 48,
+      "text": "Description of the RICS Home Survey \u2013 Level 3",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        105.6,
+        537.4,
+        127.9
+      ]
+    },
+    {
+      "page": 48,
+      "text": "service and terms of engagement",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        128.3,
+        408.4,
+        150.6
+      ]
+    },
+    {
+      "page": 48,
+      "text": "Complaints handling procedure",
+      "font": "CIDFont+F2",
+      "size": 14.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        671.9,
+        299.7,
+        687.6
+      ]
+    },
+    {
+      "page": 49,
+      "text": "Futher investigations and getting quotes",
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "bbox": [
+        85.0,
+        108.6,
+        548.8,
+        135.4
+      ]
+    },
+    {
+      "page": 49,
+      "text": "Typical house diagram",
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        299.4,
+        362.6,
+        327.2
+      ]
+    },
+    {
+      "page": 50,
+      "text": "Typical house diagram",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        307.3,
+        128.4
+      ]
+    },
+    {
+      "page": 51,
+      "text": "RICS disclaimer",
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D3069",
+      "bbox": [
+        85.0,
+        106.1,
+        242.8,
+        128.4
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "code": "A",
+      "title": "About the inspection",
+      "template_page": 3
+    },
+    {
+      "code": "B",
+      "title": "Overall opinion",
+      "template_page": 7
+    },
+    {
+      "code": "C",
+      "title": "About the property",
+      "template_page": 12
+    },
+    {
+      "code": "D",
+      "title": "Outside the property",
+      "template_page": 17
+    },
+    {
+      "code": "E",
+      "title": "Inside the property",
+      "template_page": 21
+    },
+    {
+      "code": "F",
+      "title": "Services",
+      "template_page": 25
+    },
+    {
+      "code": "G",
+      "title": "Grounds",
+      "template_page": 28
+    },
+    {
+      "code": "H",
+      "title": "Issues for your legal advisers",
+      "template_page": 30
+    },
+    {
+      "code": "I",
+      "title": "Risks",
+      "template_page": 33
+    },
+    {
+      "code": "J",
+      "title": "Energy matters",
+      "template_page": 35
+    },
+    {
+      "code": "K",
+      "title": "Surveyor's declaration",
+      "template_page": 37
+    },
+    {
+      "code": "L",
+      "title": "What to do now",
+      "template_page": 39
+    },
+    {
+      "code": "M",
+      "title": "Description of the RICS Home Survey",
+      "template_page": 41
+    },
+    {
+      "code": "N",
+      "title": "Typical house diagram",
+      "template_page": 49
+    }
+  ]
+}

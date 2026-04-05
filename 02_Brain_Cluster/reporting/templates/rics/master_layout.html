@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>RICS Level 3 Home Survey - {{ property_address }}</title>
+    <link rel="stylesheet" href="/static/css/rics_standard.css">
+    <style>
+        .toc-link {
+            display: block;
+            padding: 5px 0;
+            color: var(--rics-black);
+            text-decoration: none;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .toc-link:hover {
+            color: var(--rics-red);
+        }
+
+        .sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: #333;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sticky-nav a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .sticky-nav a:hover,
+        .sticky-nav a.active {
+            color: white;
+            font-weight: bold;
+            border-left: 3px solid var(--rics-red);
+            padding-left: 10px;
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        /* Set to 270px for web view, 0 for print */
+
+        @media screen {
+            .main-content {
+                margin-left: 270px;
+            }
+
+            .page {
+                margin-bottom: 50px;
+            }
+        }
+
+        @media print {
+            .sticky-nav {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 🧭 Navigation for Web View -->
+    <nav class="sticky-nav no-print">
+        <h2 style="color: white; border-bottom: 1px solid #555; padding-bottom: 10px;">RICS Navigation</h2>
+        <a href="#cover">Cover Page</a>
+        <a href="#section-a">A. About the inspection</a>
+        <a href="#section-b">B. Overall opinion</a>
+        <a href="#section-c">C. About the property</a>
+        <a href="#section-d">D. Outside the property</a>
+        <a href="#section-e">E. Inside the property</a>
+        <a href="#section-f">F. Services</a>
+        <a href="#section-g">G. Grounds</a>
+        <a href="#section-h">H. Legal matters</a>
+        <a href="#section-i">I. Risks</a>
+        <a href="#section-j">J. Energy</a>
+        <a href="#section-k">K. Surveyor's declaration</a>
+        <a href="#section-l">L. What to do now</a>
+        <a href="#section-m">M. Terms of engagement</a>
+    </nav>
+
+    <div class="main-content">
+
+        <!-- 📘 Cover Page -->
+        <div id="cover" class="page">
+            <div style="text-align: center; padding-top: 50mm;">
+                <h1 style="font-size: 3rem; color: var(--rics-black);">Level 3 Home Survey</h1>
+                <div style="width: 100px; height: 5px; background: var(--rics-red); margin: 20px auto;"></div>
+                <h2 style="font-weight: 300;">{{ property_address }}</h2>
+                <p style="margin-top: 50px; color: var(--rics-gray);">Date of Inspection: {{ inspection_date }}</p>
+
+                <div style="margin-top: 80px;">
+                    <img src="/static/logo.png" style="max-width: 200px;" alt="Surveyor Logo">
+                </div>
+            </div>
+        </div>
+
+        <!-- 📑 Section A -->
+        {% if show_a %}
+        <div id="section-a" class="page">
+            {% include 'rics/sections/section_a.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- 📑 Section B -->
+        {% if show_b %}
+        <div id="section-b" class="page">
+            {% include 'rics/sections/section_b.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- 📑 Section C -->
+        {% if show_c %}
+        <div id="section-c" class="page">
+            {% include 'rics/sections/section_c.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- 📑 Section D: Outside -->
+        {% if show_d %}
+        <div id="section-d" class="page">
+            <div class="rics-section-header">
+                <span>D. Outside the Property</span>
+                <span class="section-letter">D</span>
+            </div>
+            {% include 'rics/sections/section_d.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- 📑 Section E: Inside -->
+        {% if show_e %}
+        <div id="section-e" class="page">
+            <div class="rics-section-header">
+                <span>E. Inside the Property</span>
+                <span class="section-letter">E</span>
+            </div>
+            <p>The surveyor surveys the inside of the property...</p>
+            {% include 'rics/sections/section_e.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- 📑 Section F: Services -->
+        {% if show_f %}
+        <div id="section-f" class="page">
+            <div class="rics-section-header">
+                <span>F. Services</span>
+                <span class="section-letter">F</span>
+            </div>
+            {% include 'rics/sections/section_f.html' ignore missing %}
+        </div>
+        {% endif %}
+
+        <!-- ... Other sections would follow similarly ... -->
+
+    </div>
+
+</body>
+
+</html>

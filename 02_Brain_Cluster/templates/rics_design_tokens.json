@@ -1,0 +1,230 @@
+{
+  "page": {
+    "width_pt": 595.3,
+    "height_pt": 841.9,
+    "width_mm": 210.0,
+    "height_mm": 297.0,
+    "format": "A4"
+  },
+  "fonts_used": [
+    "CIDFont+F1 @ 1.0pt",
+    "CIDFont+F1 @ 10.0pt",
+    "CIDFont+F1 @ 10.1pt",
+    "CIDFont+F1 @ 10.3pt",
+    "CIDFont+F1 @ 11.0pt",
+    "CIDFont+F1 @ 11.5pt",
+    "CIDFont+F1 @ 12.0pt",
+    "CIDFont+F1 @ 14.0pt",
+    "CIDFont+F1 @ 14.5pt",
+    "CIDFont+F1 @ 16.0pt",
+    "CIDFont+F1 @ 18.5pt",
+    "CIDFont+F1 @ 2.0pt",
+    "CIDFont+F1 @ 4.0pt",
+    "CIDFont+F1 @ 4.6pt",
+    "CIDFont+F1 @ 5.0pt",
+    "CIDFont+F1 @ 5.5pt",
+    "CIDFont+F1 @ 6.0pt",
+    "CIDFont+F1 @ 6.5pt",
+    "CIDFont+F1 @ 7.0pt",
+    "CIDFont+F1 @ 7.6pt",
+    "CIDFont+F1 @ 8.0pt",
+    "CIDFont+F1 @ 8.5pt",
+    "CIDFont+F1 @ 9.0pt",
+    "CIDFont+F1 @ 9.5pt",
+    "CIDFont+F1 @ 9.7pt",
+    "CIDFont+F2 @ 10.0pt",
+    "CIDFont+F2 @ 10.6pt",
+    "CIDFont+F2 @ 11.0pt",
+    "CIDFont+F2 @ 11.5pt",
+    "CIDFont+F2 @ 12.0pt",
+    "CIDFont+F2 @ 12.5pt",
+    "CIDFont+F2 @ 13.0pt",
+    "CIDFont+F2 @ 13.6pt",
+    "CIDFont+F2 @ 14.0pt",
+    "CIDFont+F2 @ 14.5pt",
+    "CIDFont+F2 @ 17.5pt",
+    "CIDFont+F2 @ 18.0pt",
+    "CIDFont+F2 @ 19.0pt",
+    "CIDFont+F2 @ 20.0pt",
+    "CIDFont+F2 @ 21.0pt",
+    "CIDFont+F2 @ 22.0pt",
+    "CIDFont+F2 @ 24.0pt",
+    "CIDFont+F2 @ 25.0pt",
+    "CIDFont+F2 @ 27.0pt",
+    "CIDFont+F2 @ 27.5pt",
+    "CIDFont+F2 @ 28.0pt",
+    "CIDFont+F2 @ 3.0pt",
+    "CIDFont+F2 @ 35.5pt",
+    "CIDFont+F2 @ 37.0pt",
+    "CIDFont+F2 @ 37.6pt",
+    "CIDFont+F2 @ 4.0pt",
+    "CIDFont+F2 @ 4.6pt",
+    "CIDFont+F2 @ 5.0pt",
+    "CIDFont+F2 @ 5.5pt",
+    "CIDFont+F2 @ 54.0pt",
+    "CIDFont+F2 @ 6.0pt",
+    "CIDFont+F2 @ 6.5pt",
+    "CIDFont+F2 @ 60.0pt",
+    "CIDFont+F2 @ 7.0pt",
+    "CIDFont+F2 @ 7.6pt",
+    "CIDFont+F2 @ 8.0pt",
+    "CIDFont+F2 @ 8.5pt",
+    "CIDFont+F2 @ 9.0pt",
+    "CIDFont+F2 @ 9.5pt",
+    "CIDFont+F2 @ 9.7pt",
+    "CIDFont+F3 @ 10.0pt",
+    "CIDFont+F4 @ 10.0pt",
+    "CIDFont+F5 @ 12.0pt",
+    "CIDFont+F6 @ 10.0pt",
+    "CIDFont+F7 @ 10.0pt",
+    "CIDFont+F7 @ 8.0pt",
+    "CIDFont+F8 @ 10.0pt",
+    "CIDFont+F8 @ 11.0pt",
+    "CIDFont+F8 @ 8.0pt",
+    "CIDFont+F8 @ 9.0pt"
+  ],
+  "colors_used": [
+    "#231F20",
+    "#4C2F69",
+    "#4D2D69",
+    "#4D3069",
+    "#FFFFFF"
+  ],
+  "header_styles": {
+    "CIDFont+F1_16.0pt": {
+      "font": "CIDFont+F1",
+      "size": 16.0,
+      "color": "#FFFFFF",
+      "examples": [
+        "LEVEL 3"
+      ]
+    },
+    "CIDFont+F2_37.0pt": {
+      "font": "CIDFont+F2",
+      "size": 37.0,
+      "color": "#FFFFFF",
+      "examples": [
+        "Your survey",
+        "report..."
+      ]
+    },
+    "CIDFont+F2_21.0pt": {
+      "font": "CIDFont+F2",
+      "size": 21.0,
+      "color": "#4D2D69",
+      "examples": [
+        "Contents"
+      ]
+    },
+    "CIDFont+F2_24.0pt": {
+      "font": "CIDFont+F2",
+      "size": 24.0,
+      "color": "#4D2D69",
+      "examples": [
+        "Futher investigations and getting quotes",
+        "Futher investigations and getting quotes",
+        "Futher investigations and getting quotes"
+      ]
+    },
+    "CIDFont+F2_25.0pt": {
+      "font": "CIDFont+F2",
+      "size": 25.0,
+      "color": "#4C2F69",
+      "examples": [
+        "About the inspection",
+        "Overall opinion",
+        "About the property"
+      ]
+    },
+    "CIDFont+F2_20.0pt": {
+      "font": "CIDFont+F2",
+      "size": 20.0,
+      "color": "#4D2D69",
+      "examples": [
+        "About the survey",
+        "About the inspection",
+        "Summary of condition ratings"
+      ]
+    },
+    "CIDFont+F2_14.0pt": {
+      "font": "CIDFont+F2",
+      "size": 14.0,
+      "color": "#4D3069",
+      "examples": [
+        "Complaints handling procedure"
+      ]
+    }
+  },
+  "toc_structure": [
+    {
+      "code": "A",
+      "title": "About the inspection",
+      "template_page": 3
+    },
+    {
+      "code": "B",
+      "title": "Overall opinion",
+      "template_page": 7
+    },
+    {
+      "code": "C",
+      "title": "About the property",
+      "template_page": 12
+    },
+    {
+      "code": "D",
+      "title": "Outside the property",
+      "template_page": 17
+    },
+    {
+      "code": "E",
+      "title": "Inside the property",
+      "template_page": 21
+    },
+    {
+      "code": "F",
+      "title": "Services",
+      "template_page": 25
+    },
+    {
+      "code": "G",
+      "title": "Grounds",
+      "template_page": 28
+    },
+    {
+      "code": "H",
+      "title": "Issues for your legal advisers",
+      "template_page": 30
+    },
+    {
+      "code": "I",
+      "title": "Risks",
+      "template_page": 33
+    },
+    {
+      "code": "J",
+      "title": "Energy matters",
+      "template_page": 35
+    },
+    {
+      "code": "K",
+      "title": "Surveyor's declaration",
+      "template_page": 37
+    },
+    {
+      "code": "L",
+      "title": "What to do now",
+      "template_page": 39
+    },
+    {
+      "code": "M",
+      "title": "Description of the RICS Home Survey",
+      "template_page": 41
+    },
+    {
+      "code": "N",
+      "title": "Typical house diagram",
+      "template_page": 49
+    }
+  ]
+}

@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RICS Survey Hub — Dashboard</title>
+    <meta name="description" content="RICS Building Survey Management Dashboard for Professional Surveyors">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+    --bg: #06060E;
+    --bg-surface: #0B0F1A;
+    --bg-card: rgba(15, 23, 42, 0.75);
+    --bg-card-hover: rgba(20, 30, 55, 0.85);
+    --bg-toolbar: #0D1220;
+    --purple: #4D2D69;
+    --purple-light: #8B6AAD;
+    --purple-glow: rgba(77,45,105,0.25);
+    --gold: #D4A843;
+    --gold-dim: rgba(212,168,67,0.12);
+    --green: #4CAF50;
+    --green-dim: rgba(76,175,80,0.12);
+    --blue: #42A5F5;
+    --blue-dim: rgba(66,165,245,0.12);
+    --amber: #FF9800;
+    --amber-dim: rgba(255,152,0,0.12);
+    --red: #F44336;
+    --red-dim: rgba(244,67,54,0.12);
+    --gray: #64748B;
+    --gray-dim: rgba(100,116,139,0.12);
+    --text: #EAEAEA;
+    --text-sec: #8890A0;
+    --text-dim: #555B6E;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --glass: rgba(255,255,255,0.03);
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.3);
+    --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════ */
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+    background: linear-gradient(180deg, rgba(15,23,42,0.95) 0%, var(--bg) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.logo-mark {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 16px rgba(77,45,105,0.3);
+}
+.logo-text {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.logo-text span { color: var(--gold); }
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.notif-btn {
+    width: 38px; height: 38px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 16px;
+    color: var(--text-sec);
+}
+.notif-btn:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); color: var(--text); }
+
+.user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px 14px 6px 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.user-pill:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); }
+.user-avatar {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--purple), var(--gold));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+}
+.user-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+.user-role {
+    font-size: 9px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.user-menu {
+    display: none;
+    position: absolute;
+    top: 56px;
+    right: 24px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    min-width: 160px;
+    z-index: 200;
+    box-shadow: var(--shadow);
+}
+.user-menu.show { display: block; }
+.user-menu button {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.user-menu button:hover { background: rgba(255,255,255,0.06); }
+.user-menu button.danger { color: var(--red); }
+
+/* ── CONTENT ── */
+.content {
+    flex: 1;
+    padding: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ── KPI CARDS ── */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.kpi-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: var(--transition);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+}
+.kpi-card.total::before { background: linear-gradient(90deg, var(--purple), var(--purple-light)); }
+.kpi-card.active::before { background: var(--green); }
+.kpi-card.completed::before { background: var(--blue); }
+.kpi-card.archived::before { background: var(--gray); }
+
+.kpi-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.kpi-card.total .kpi-value { color: var(--purple-light); }
+.kpi-card.active .kpi-value { color: var(--green); }
+.kpi-card.completed .kpi-value { color: var(--blue); }
+.kpi-card.archived .kpi-value { color: var(--gray); }
+.kpi-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-sec);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.kpi-icon {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 22px;
+    opacity: 0.4;
+}
+
+/* ── TABS + SEARCH ── */
+.tab-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.tab-btn {
+    padding: 10px 22px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-sec);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border-hover); }
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    color: white;
+    border-color: var(--purple-light);
+    box-shadow: 0 4px 20px rgba(77,45,105,0.3);
+}
+.tab-count {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,0.15);
+    padding: 2px 7px;
+    border-radius: 6px;
+}
+.search-box {
+    margin-left: auto;
+    position: relative;
+}
+.search-box input {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px 10px 36px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    width: 240px;
+    transition: var(--transition);
+}
+.search-box input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    z-index: 1;
+}
+
+/* ── PROJECT GRID ── */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+}
+.project-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.project-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+    background: var(--bg-card-hover);
+}
+.project-card .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.card-icon {
+    width: 44px; height: 44px;
+    background: var(--purple-glow);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+.card-ref {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-sec);
+}
+.card-client {
+    font-size: 12px;
+    color: var(--text-sec);
+    margin-bottom: 12px;
+}
+.card-client strong { color: var(--text); font-weight: 500; }
+
+/* Condition badges */
+.cr-badges {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.cr-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.cr-badge.cr1 { background: var(--green-dim); color: var(--green); }
+.cr-badge.cr2 { background: var(--amber-dim); color: var(--amber); }
+.cr-badge.cr3 { background: var(--red-dim); color: var(--red); }
+
+/* Card meta row */
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+}
+.card-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* Approval badge */
+.approval-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+}
+.approval-badge.approved { background: var(--green-dim); color: var(--green); }
+.approval-badge.pending { background: var(--amber-dim); color: var(--amber); }
+.approval-badge.rejected { background: var(--red-dim); color: var(--red); }
+
+/* Card actions */
+.card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+.card-actions button {
+    flex: 1;
+    padding: 8px 0;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-sec);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.card-actions button:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border-hover); }
+.card-actions button.primary {
+    background: var(--purple-glow);
+    border-color: rgba(77,45,105,0.4);
+    color: var(--purple-light);
+}
+.card-actions button.primary:hover {
+    background: var(--purple);
+    color: white;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+}
+.empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.5; }
+.empty-title { font-size: 18px; font-weight: 600; color: var(--text-sec); margin-bottom: 8px; }
+.empty-sub { font-size: 13px; color: var(--text-dim); }
+
+/* ═══════════════════════════════════════════
+   PROJECT DETAIL VIEW
+   ═══════════════════════════════════════════ */
+.detail-view {
+    display: none;
+}
+.detail-view.show { display: block; }
+.grid-view.hide { display: none; }
+
+.detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-sec);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 24px;
+}
+.detail-back:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+
+.detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.detail-title { font-size: 24px; font-weight: 800; }
+.detail-ref {
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-sec);
+    margin-top: 4px;
+}
+.detail-status {
+    padding: 8px 18px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.detail-status.active { background: var(--green-dim); color: var(--green); border: 1px solid rgba(76,175,80,0.3); }
+.detail-status.completed { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(66,165,245,0.3); }
+.detail-status.archived { background: var(--gray-dim); color: var(--gray); border: 1px solid rgba(100,116,139,0.3); }
+
+/* Info grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.info-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+}
+.info-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+.info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Condition summary bar */
+.condition-bar-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.condition-bar-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sec);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.condition-bar {
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    margin-bottom: 10px;
+}
+.condition-bar .seg-ok { background: var(--green); }
+.condition-bar .seg-attn { background: var(--amber); }
+.condition-bar .seg-urgent { background: var(--red); }
+.condition-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--text-sec);
+}
+.condition-legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.condition-legend .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+}
+
+/* Report section */
+.report-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.report-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.report-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+.report-action-btn {
+    padding: 14px 16px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.report-action-btn:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); }
+.report-action-btn .icon { font-size: 20px; }
+.report-action-btn.highlight {
+    background: var(--purple-glow);
+    border-color: rgba(77,45,105,0.4);
+}
+.report-action-btn.highlight:hover {
+    background: var(--purple);
+    border-color: var(--purple-light);
+}
+
+/* Photo preview */
+.photo-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+}
+.photo-preview-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+.photo-preview-grid img:hover { border-color: var(--gold); transform: scale(1.05); }
+.photo-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-sec);
+    font-size: 13px;
+    font-weight: 600;
+    aspect-ratio: 1;
+}
+
+/* Versions list */
+.version-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.version-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    transition: var(--transition);
+}
+.version-row:hover { background: rgba(255,255,255,0.05); }
+.version-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 40px;
+}
+.version-active-badge {
+    font-size: 9px;
+    background: var(--green-dim);
+    color: var(--green);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.version-date { color: var(--text-sec); font-size: 12px; flex: 1; }
+.version-pdf-btn {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-sec);
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+}
+.version-pdf-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+/* Status actions */
+.status-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.status-action-btn {
+    padding: 12px 24px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-sec);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.status-action-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.status-action-btn.green:hover { background: var(--green-dim); color: var(--green); border-color: rgba(76,175,80,0.3); }
+.status-action-btn.gray:hover { background: var(--gray-dim); color: var(--gray); border-color: rgba(100,116,139,0.3); }
+.status-action-btn.red:hover { background: var(--red-dim); color: var(--red); border-color: rgba(244,67,54,0.3); }
+
+/* ═══════════════════════════════════════════
+   DOWNLOAD CENTER
+   ═══════════════════════════════════════════ */
+.download-center {
+    margin-bottom: 24px;
+}
+.download-tier {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+.download-tier:hover { border-color: var(--border-hover); }
+.tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.tier-header:hover { background: rgba(255,255,255,0.03); }
+.tier-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.tier-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.tier-icon.t1 { background: linear-gradient(135deg, var(--purple), var(--purple-light)); }
+.tier-icon.t2 { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+.tier-icon.t3 { background: linear-gradient(135deg, #d97706, #fbbf24); }
+.tier-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+.tier-desc {
+    font-size: 12px;
+    color: var(--text-sec);
+}
+.tier-toggle {
+    font-size: 18px;
+    color: var(--text-dim);
+    transition: transform 0.3s;
+}
+.tier-toggle.open { transform: rotate(180deg); }
+.tier-body {
+    padding: 0 20px 20px 20px;
+    display: none;
+}
+.tier-body.open { display: block; }
+
+/* Tier 1: Full report buttons */
+.dl-btn-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+.dl-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.dl-btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.dl-btn .dl-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.dl-btn .dl-icon.pdf { background: var(--red-dim); }
+.dl-btn .dl-icon.docx { background: var(--blue-dim); }
+.dl-btn .dl-icon.zip { background: var(--gold-dim); }
+.dl-btn .dl-icon.html { background: var(--purple-glow); }
+.dl-btn-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* Tier 2: Room cards */
+.room-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+.room-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    transition: var(--transition);
+}
+.room-card:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.04); }
+.room-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.room-card-icon {
+    width: 36px; height: 36px;
+    background: var(--blue-dim);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+.room-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.room-card-floor {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+}
+.room-card-stats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+.room-stat {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+.room-stat.photos { background: var(--purple-glow); color: var(--purple-light); }
+.room-stat.audio { background: var(--gold-dim); color: var(--gold); }
+.room-stat.elems { background: var(--blue-dim); color: var(--blue); }
+.room-stat.cr3 { background: var(--red-dim); color: var(--red); }
+.room-stat.cr2 { background: var(--amber-dim); color: var(--amber); }
+.room-card-actions {
+    display: flex;
+    gap: 6px;
+}
+.room-dl-btn {
+    flex: 1;
+    padding: 8px 0;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+.room-dl-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border-hover); }
+.room-dl-btn.pdf:hover { background: var(--red-dim); color: var(--red); }
+.room-dl-btn.docx:hover { background: var(--blue-dim); color: var(--blue); }
+
+/* ═══════════════════════════════════════════
+   LOADING + TOAST
+   ═══════════════════════════════════════════ */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+}
+.spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    background: var(--green);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { background: var(--red); }
+
+/* Report iframe */
+.report-frame {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+    .header { padding: 0 16px; }
+    .search-box input { width: 160px; }
+    .photo-preview-grid { grid-template-columns: repeat(3, 1fr); }
+    .report-actions { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tab-bar { gap: 6px; }
+    .tab-btn { padding: 8px 14px; font-size: 12px; }
+    .search-box { width: 100%; margin-left: 0; margin-top: 8px; }
+    .search-box input { width: 100%; }
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo-mark">🏛</div>
+            <div class="logo-text">RICS <span>Survey Hub</span></div>
+        </div>
+        <div class="header-right">
+            <button class="notif-btn" title="Notifications">🔔</button>
+            <div class="user-pill" onclick="toggleUserMenu()">
+                <div class="user-avatar" id="userInitials">S</div>
+                <div>
+                    <div class="user-name" id="userName">Surveyor</div>
+                    <div class="user-role" id="userRole">SURVEYOR</div>
+                </div>
+            </div>
+            <div class="user-menu" id="userMenu">
+                <button onclick="window.location.href='/editor'">📝 Report Editor</button>
+                <button class="danger" onclick="logout()">🚪 Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <!-- === GRID VIEW (Dashboard) === -->
+        <div class="grid-view" id="gridView">
+            <!-- KPI Cards -->
+            <div class="kpi-row" id="kpiRow">
+                <div class="kpi-card total">
+                    <div class="kpi-value" id="kpiTotal">-</div>
+                    <div class="kpi-label">Total Projects</div>
+                    <div class="kpi-icon">📊</div>
+                </div>
+                <div class="kpi-card active">
+                    <div class="kpi-value" id="kpiActive">-</div>
+                    <div class="kpi-label">Active</div>
+                    <div class="kpi-icon">🟢</div>
+                </div>
+                <div class="kpi-card completed">
+                    <div class="kpi-value" id="kpiCompleted">-</div>
+                    <div class="kpi-label">Completed</div>
+                    <div class="kpi-icon">✅</div>
+                </div>
+                <div class="kpi-card archived">
+                    <div class="kpi-value" id="kpiArchived">-</div>
+                    <div class="kpi-label">Archived</div>
+                    <div class="kpi-icon">📦</div>
+                </div>
+            </div>
+
+            <!-- Tabs + Search -->
+            <div class="tab-bar">
+                <button class="tab-btn active" data-status="all" onclick="setTab('all', this)">
+                    📋 All <span class="tab-count" id="tabAllCount">0</span>
+                </button>
+                <button class="tab-btn" data-status="active" onclick="setTab('active', this)">
+                    🟢 Active <span class="tab-count" id="tabActiveCount">0</span>
+                </button>
+                <button class="tab-btn" data-status="completed" onclick="setTab('completed', this)">
+                    ✅ Completed <span class="tab-count" id="tabCompletedCount">0</span>
+                </button>
+                <button class="tab-btn" data-status="archived" onclick="setTab('archived', this)">
+                    📦 Archive <span class="tab-count" id="tabArchivedCount">0</span>
+                </button>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search projects..." oninput="handleSearch(this.value)">
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="projects-grid" id="projectsGrid"></div>
+        </div>
+
+        <!-- === DETAIL VIEW === -->
+        <div class="detail-view" id="detailView"></div>
+    </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
+const API = window.location.origin + '/api';
+let allProjects = [];
+let currentTab = 'all';
+let searchQuery = '';
+
+// ═══════════════════════════════════════════
+// AUTH CHECK
+// ═══════════════════════════════════════════
+(function initAuth() {
+    const token = localStorage.getItem('rics_token');
+    const user = JSON.parse(localStorage.getItem('rics_user') || '{}');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    if (user.full_name) {
+        document.getElementById('userName').textContent = user.full_name;
+        document.getElementById('userInitials').textContent = user.full_name.charAt(0).toUpperCase();
+    }
+    if (user.role) {
+        document.getElementById('userRole').textContent = user.role.toUpperCase();
+    }
+})();
+
+// ═══════════════════════════════════════════
+// DATA LOADING
+// ═══════════════════════════════════════════
+async function loadDashboard() {
+    try {
+        const res = await fetch(`${API}/dashboard/overview`);
+        if (!res.ok) throw new Error('Failed to load dashboard');
+        const data = await res.json();
+
+        // KPI
+        document.getElementById('kpiTotal').textContent = data.kpi.total;
+        document.getElementById('kpiActive').textContent = data.kpi.active;
+        document.getElementById('kpiCompleted').textContent = data.kpi.completed;
+        document.getElementById('kpiArchived').textContent = data.kpi.archived;
+
+        // Tab counts
+        document.getElementById('tabAllCount').textContent = data.kpi.total;
+        document.getElementById('tabActiveCount').textContent = data.kpi.active;
+        document.getElementById('tabCompletedCount').textContent = data.kpi.completed;
+        document.getElementById('tabArchivedCount').textContent = data.kpi.archived;
+
+        allProjects = data.projects;
+        renderProjects();
+    } catch (e) {
+        console.error('Dashboard load error:', e);
+        showToast('Failed to load dashboard: ' + e.message, true);
+    }
+}
+
+function getFilteredProjects() {
+    let filtered = allProjects;
+    if (currentTab !== 'all') {
+        filtered = filtered.filter(p => {
+            if (currentTab === 'active') return p.status === 'active' || !p.status;
+            return p.status === currentTab;
+        });
+    }
+    if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(p =>
+            (p.address || '').toLowerCase().includes(q) ||
+            (p.reference || '').toLowerCase().includes(q) ||
+            (p.client_name || '').toLowerCase().includes(q)
+        );
+    }
+    return filtered;
+}
+
+function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    const filtered = getFilteredProjects();
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1/-1">
+                <div class="empty-icon">🏗</div>
+                <div class="empty-title">No Projects Found</div>
+                <div class="empty-sub">${searchQuery ? 'Try a different search term' : 'Start an inspection from the mobile app'}</div>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = filtered.map((p, i) => {
+        const okCount = Math.max(0, (p.total_elements || 0) - (p.urgent_count || 0) - (p.attention_count || 0));
+        const date = p.inspection_date || (p.created_at ? p.created_at.substring(0, 10) : '');
+        const addr = p.address || p.reference || 'Untitled Property';
+        const approvalClass = p.approval_status || 'pending';
+        const approvalLabel = {approved: '✅ Approved', pending: '⏳ Pending', rejected: '❌ Rejected'}[approvalClass] || '⏳ Pending';
+
+        return `
+        <div class="project-card fade-in" style="animation-delay: ${i * 0.06}s" onclick="openProject('${p.id}')">
+            <div class="card-header">
+                <div class="card-icon">🏠</div>
+                <div>
+                    <div class="card-title">${escHtml(addr)}</div>
+                    <div class="card-ref">${escHtml(p.reference)}</div>
+                </div>
+            </div>
+            <div class="card-client"><strong>Client:</strong> ${escHtml(p.client_name || 'N/A')}</div>
+            <div class="cr-badges">
+                ${p.total_elements > 0 ? `
+                    <span class="cr-badge cr1">CR1 ${okCount}</span>
+                    <span class="cr-badge cr2">CR2 ${p.attention_count || 0}</span>
+                    <span class="cr-badge cr3">CR3 ${p.urgent_count || 0}</span>
+                ` : '<span style="font-size:11px;color:var(--text-dim)">No rating data yet</span>'}
+            </div>
+            <div class="card-meta">
+                <span>📸 ${p.total_photos || 0} photos</span>
+                <span>📄 ${p.latest_version || '—'}</span>
+                <span>📅 ${date}</span>
+            </div>
+            <span class="approval-badge ${approvalClass}">${approvalLabel}</span>
+            <div class="card-actions" onclick="event.stopPropagation()">
+                <button class="primary" onclick="openProject('${p.id}')">👁 View</button>
+                <button onclick="downloadPdf('${p.id}')">📥 PDF</button>
+                <button onclick="openStatusMenu(event, '${p.id}', '${p.status || 'active'}')">⋮ More</button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════
+// TABS & SEARCH
+// ═══════════════════════════════════════════
+function setTab(status, btn) {
+    currentTab = status;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProjects();
+}
+
+function handleSearch(val) {
+    searchQuery = val.trim();
+    renderProjects();
+}
+
+// ═══════════════════════════════════════════
+// PROJECT DETAIL
+// ═══════════════════════════════════════════
+async function openProject(id) {
+    const detail = document.getElementById('detailView');
+    const grid = document.getElementById('gridView');
+
+    detail.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+    detail.classList.add('show');
+    grid.classList.add('hide');
+
+    try {
+        const res = await fetch(`${API}/projects/${id}/summary`);
+        if (!res.ok) throw new Error('Failed to load project');
+        const data = await res.json();
+        renderDetail(data);
+    } catch (e) {
+        detail.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading project</div><div class="empty-sub">${e.message}</div></div>`;
+    }
+}
+
+function renderDetail(data) {
+    const p = data.project;
+    const detail = document.getElementById('detailView');
+    const total = p.total_elements || 1;
+    const okPct = Math.max(0, ((total - (p.urgent_count || 0) - (p.attention_count || 0)) / total * 100));
+    const attnPct = ((p.attention_count || 0) / total * 100);
+    const urgPct = ((p.urgent_count || 0) / total * 100);
+    const addr = p.address || p.reference || 'Untitled Property';
+    const statusClass = p.status || 'active';
+
+    detail.innerHTML = `
+    <div class="fade-in">
+        <button class="detail-back" onclick="closeDetail()">← Back to Dashboard</button>
+
+        <div class="detail-header">
+            <div>
+                <div class="detail-title">${escHtml(addr)}</div>
+                <div class="detail-ref">Ref: ${escHtml(p.reference)} ${p.rics_number ? '| RICS# ' + escHtml(p.rics_number) : ''}</div>
+            </div>
+            <div class="detail-status ${statusClass}">${statusClass.toUpperCase()}</div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Client</div>
+                <div class="info-value">${escHtml(p.client_name || 'N/A')}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Surveyor</div>
+                <div class="info-value">${escHtml(p.surveyor_name || 'N/A')}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Inspection Date</div>
+                <div class="info-value">${p.inspection_date || p.created_at?.substring(0,10) || '—'}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Photos</div>
+                <div class="info-value">${data.total_photos_on_disk || 0}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Elements</div>
+                <div class="info-value">${p.total_elements || 0}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Latest Version</div>
+                <div class="info-value">${p.latest_version || '—'}</div>
+            </div>
+        </div>
+
+        <!-- Condition Bar -->
+        ${p.total_elements > 0 ? `
+        <div class="condition-bar-wrap">
+            <div class="condition-bar-title">Condition Summary</div>
+            <div class="condition-bar">
+                <div class="seg-ok" style="width:${okPct}%"></div>
+                <div class="seg-attn" style="width:${attnPct}%"></div>
+                <div class="seg-urgent" style="width:${urgPct}%"></div>
+            </div>
+            <div class="condition-legend">
+                <span><span class="dot" style="background:var(--green)"></span> CR1 OK: ${Math.round(okPct)}%</span>
+                <span><span class="dot" style="background:var(--amber)"></span> CR2 Attention: ${Math.round(attnPct)}%</span>
+                <span><span class="dot" style="background:var(--red)"></span> CR3 Urgent: ${Math.round(urgPct)}%</span>
+            </div>
+        </div>
+        ` : ''}
+
+        <!-- ═══ DOWNLOAD CENTER ═══ -->
+        <div class="download-center">
+            <div class="report-section-title" style="margin-bottom:16px;">📥 Download Center</div>
+
+            <!-- TIER 1: Full Report -->
+            <div class="download-tier">
+                <div class="tier-header" onclick="toggleTier(this)">
+                    <div class="tier-left">
+                        <div class="tier-icon t1">📄</div>
+                        <div>
+                            <div class="tier-title">Full Report</div>
+                            <div class="tier-desc">Complete RICS Level 3 report with all sections and embedded images</div>
+                        </div>
+                    </div>
+                    <span class="tier-toggle">▼</span>
+                </div>
+                <div class="tier-body">
+                    ${data.has_report ? `
+                    <div class="dl-btn-row">
+                        <button class="dl-btn" onclick="downloadPdf('${p.id}')">
+                            <div class="dl-icon pdf">📄</div>
+                            <div>
+                                <div>Download PDF</div>
+                                <div class="dl-btn-meta">Print-ready A4, RICS branded</div>
+                            </div>
+                        </button>
+                        <button class="dl-btn" onclick="downloadDocx('${p.id}')">
+                            <div class="dl-icon docx">📝</div>
+                            <div>
+                                <div>Download Word (DOCX)</div>
+                                <div class="dl-btn-meta">Editable, with embedded images</div>
+                            </div>
+                        </button>
+                        <button class="dl-btn" onclick="viewReportHtml('${data.report_html_url}')">
+                            <div class="dl-icon html">👁</div>
+                            <div>
+                                <div>View HTML Report</div>
+                                <div class="dl-btn-meta">Interactive web view</div>
+                            </div>
+                        </button>
+                        <button class="dl-btn" onclick="openEditor('${p.id}')">
+                            <div class="dl-icon docx">✏️</div>
+                            <div>
+                                <div>Edit in WYSIWYG</div>
+                                <div class="dl-btn-meta">Make changes before export</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div style="margin-top:12px;display:flex;gap:10px;">
+                        <button class="dl-btn" style="flex:0 0 auto;" onclick="regenerateReport('${p.id}')">
+                            <div class="dl-icon" style="background:var(--green-dim)">🔄</div>
+                            <div>
+                                <div>Regenerate Report</div>
+                                <div class="dl-btn-meta">Re-run AI analysis (~45 sec)</div>
+                            </div>
+                        </button>
+                    </div>
+                    ` : `
+                    <div style="text-align:center;padding:24px;color:var(--text-sec);">
+                        No report generated yet.
+                        <br><br>
+                        <button class="dl-btn" onclick="regenerateReport('${p.id}')" style="display:inline-flex">
+                            <div class="dl-icon" style="background:var(--green-dim)">🚀</div>
+                            <div>Generate Report Now</div>
+                        </button>
+                    </div>
+                    `}
+                </div>
+            </div>
+
+            <!-- TIER 2: Room Reports -->
+            <div class="download-tier">
+                <div class="tier-header" onclick="toggleTier(this); loadRooms('${p.id}');">
+                    <div class="tier-left">
+                        <div class="tier-icon t2">🚪</div>
+                        <div>
+                            <div class="tier-title">Room Reports</div>
+                            <div class="tier-desc">Download individual room inspection reports with photos and findings</div>
+                        </div>
+                    </div>
+                    <span class="tier-toggle">▼</span>
+                </div>
+                <div class="tier-body" id="roomsContainer">
+                    <div class="loading-spinner" id="roomsLoader"><div class="spinner"></div></div>
+                    <div class="room-cards" id="roomCards"></div>
+                </div>
+            </div>
+
+            <!-- TIER 3: Raw Data -->
+            <div class="download-tier">
+                <div class="tier-header" onclick="toggleTier(this)">
+                    <div class="tier-left">
+                        <div class="tier-icon t3">📦</div>
+                        <div>
+                            <div class="tier-title">Raw Data Package</div>
+                            <div class="tier-desc">Full ZIP archive: all photos, audio recordings, and JSON data</div>
+                        </div>
+                    </div>
+                    <span class="tier-toggle">▼</span>
+                </div>
+                <div class="tier-body">
+                    <div class="dl-btn-row">
+                        <button class="dl-btn" onclick="downloadRawZip('${p.id}')">
+                            <div class="dl-icon zip">📦</div>
+                            <div>
+                                <div>Download ZIP Archive</div>
+                                <div class="dl-btn-meta">All photos, audio, timeline JSONs — organized by room</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report HTML preview -->
+        ${data.has_report ? `
+        <div class="report-section">
+            <div class="report-section-title">📋 Report Preview</div>
+            <iframe class="report-frame" id="reportFrame" src="${data.report_html_url}" loading="lazy"></iframe>
+        </div>
+        ` : ''}
+
+        <!-- Photo Preview -->
+        ${data.photo_previews && data.photo_previews.length > 0 ? `
+        <div class="report-section">
+            <div class="report-section-title">📸 Photo Evidence (${data.total_photos_on_disk})</div>
+            <div class="photo-preview-grid">
+                ${data.photo_previews.map(url => `<img src="${url}" loading="lazy" alt="Evidence photo">`).join('')}
+                ${data.total_photos_on_disk > 6 ? `<div class="photo-more">+${data.total_photos_on_disk - 6} more</div>` : ''}
+            </div>
+        </div>
+        ` : ''}
+
+        <!-- Versions -->
+        ${data.versions && data.versions.length > 0 ? `
+        <div class="report-section">
+            <div class="report-section-title">📊 Version History (${data.versions.length})</div>
+            <div class="version-list">
+                ${data.versions.reverse().map(v => `
+                <div class="version-row">
+                    <span class="version-id">${v.version_id}</span>
+                    ${v.version_id === p.latest_version ? '<span class="version-active-badge">ACTIVE</span>' : ''}
+                    <span class="version-date">${new Date(v.created_at * 1000).toLocaleDateString()} ${new Date(v.created_at * 1000).toLocaleTimeString()}</span>
+                    ${v.has_pdf ? `<button class="version-pdf-btn" onclick="event.stopPropagation(); viewVersionPdf('${p.id}', '${v.version_id}')">📄 PDF</button>` : ''}
+                </div>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
+
+        <!-- Status Actions -->
+        <div class="report-section">
+            <div class="report-section-title">⚡ Project Management</div>
+            <div class="status-actions">
+                ${statusClass !== 'completed' ? `<button class="status-action-btn green" onclick="changeStatus('${p.id}', 'completed')">✅ Mark Complete</button>` : ''}
+                ${statusClass !== 'archived' ? `<button class="status-action-btn gray" onclick="changeStatus('${p.id}', 'archived')">📦 Archive</button>` : ''}
+                ${statusClass !== 'active' ? `<button class="status-action-btn" onclick="changeStatus('${p.id}', 'active')">🔄 Reactivate</button>` : ''}
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+function closeDetail() {
+    document.getElementById('detailView').classList.remove('show');
+    document.getElementById('detailView').innerHTML = '';
+    document.getElementById('gridView').classList.remove('hide');
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════
+function viewReportHtml(url) {
+    window.open(url, '_blank');
+}
+
+function downloadPdf(pid) {
+    showToast('📄 Preparing PDF download...');
+    window.open(`${API}/projects/${pid}/download/pdf`, '_blank');
+}
+
+function downloadDocx(pid) {
+    showToast('📝 Generating Word document...');
+    window.open(`${API}/projects/${pid}/download/docx`, '_blank');
+}
+
+function downloadRawZip(pid) {
+    showToast('📦 Preparing ZIP archive...');
+    window.open(`${API}/projects/${pid}/download/raw-zip`, '_blank');
+}
+
+function downloadRoomPdf(pid, roomId) {
+    showToast('📄 Generating room PDF...');
+    window.open(`${API}/projects/${pid}/download/room/${roomId}/pdf`, '_blank');
+}
+
+function downloadRoomDocx(pid, roomId) {
+    showToast('📝 Generating room DOCX...');
+    window.open(`${API}/projects/${pid}/download/room/${roomId}/docx`, '_blank');
+}
+
+// ── Tier toggle & room loading ──
+function toggleTier(el) {
+    const body = el.nextElementSibling;
+    const arrow = el.querySelector('.tier-toggle');
+    body.classList.toggle('open');
+    arrow.classList.toggle('open');
+}
+
+let roomsLoaded = {};
+async function loadRooms(pid) {
+    if (roomsLoaded[pid]) return;
+    const container = document.getElementById('roomCards');
+    const loader = document.getElementById('roomsLoader');
+    try {
+        const res = await fetch(`${API}/projects/${pid}/download/rooms`);
+        if (!res.ok) throw new Error('Failed to load rooms');
+        const data = await res.json();
+        loader.style.display = 'none';
+
+        if (data.rooms.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-sec);">No room reports found</div>';
+            return;
+        }
+
+        container.innerHTML = data.rooms.map(room => `
+            <div class="room-card">
+                <div class="room-card-header">
+                    <div class="room-card-icon">🚪</div>
+                    <div>
+                        <div class="room-card-name">${escHtml(room.room_name)}</div>
+                        <div class="room-card-floor">${escHtml(room.floor)}</div>
+                    </div>
+                </div>
+                <div class="room-card-stats">
+                    <span class="room-stat photos">📸 ${room.photos}</span>
+                    <span class="room-stat audio">🎙 ${room.audio}</span>
+                    <span class="room-stat elems">📋 ${room.elements}</span>
+                    ${room.urgent > 0 ? `<span class="room-stat cr3">⚠ CR3: ${room.urgent}</span>` : ''}
+                    ${room.attention > 0 ? `<span class="room-stat cr2">⚡ CR2: ${room.attention}</span>` : ''}
+                </div>
+                <div class="room-card-actions">
+                    <button class="room-dl-btn pdf" onclick="downloadRoomPdf('${pid}', '${room.room_id}')">📄 PDF</button>
+                    <button class="room-dl-btn docx" onclick="downloadRoomDocx('${pid}', '${room.room_id}')">📝 DOCX</button>
+                </div>
+            </div>
+        `).join('');
+        roomsLoaded[pid] = true;
+    } catch(e) {
+        loader.style.display = 'none';
+        container.innerHTML = `<div style="color:var(--red);padding:16px;">Error: ${e.message}</div>`;
+    }
+}
+
+function openEditor(pid) {
+    window.open(`/editor?project=${pid}`, '_blank');
+}
+
+async function regenerateReport(pid) {
+    if (!confirm('Regenerate the RICS report? This may take ~45 seconds.')) return;
+    showToast('🔄 Generating report...');
+    try {
+        const res = await fetch(`${API}/projects/${pid}/generate-final-report`, { method: 'POST' });
+        if (res.ok) {
+            showToast('✅ Report generated successfully!');
+            openProject(pid); // Refresh
+        } else {
+            const data = await res.json().catch(() => ({}));
+            showToast('❌ Generation failed: ' + (data.detail || 'Unknown error'), true);
+        }
+    } catch (e) {
+        showToast('❌ Error: ' + e.message, true);
+    }
+}
+
+function viewVersionPdf(pid, vid) {
+    window.open(`${API}/projects/${pid}/report-version/${vid}/pdf`, '_blank');
+}
+
+async function changeStatus(pid, newStatus) {
+    const labels = { completed: 'Complete', archived: 'Archive', active: 'Reactivate' };
+    if (!confirm(`${labels[newStatus]} this project?`)) return;
+    try {
+        const res = await fetch(`${API}/projects/${pid}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus }),
+        });
+        if (res.ok) {
+            showToast(`✅ Project ${newStatus}`);
+            closeDetail();
+            loadDashboard();
+        } else {
+            showToast('❌ Failed to update status', true);
+        }
+    } catch (e) {
+        showToast('❌ Error: ' + e.message, true);
+    }
+}
+
+function openStatusMenu(e, pid, current) {
+    e.stopPropagation();
+    const items = [];
+    if (current !== 'completed') items.push(`<button onclick="event.stopPropagation();changeStatus('${pid}','completed')">✅ Complete</button>`);
+    if (current !== 'archived') items.push(`<button onclick="event.stopPropagation();changeStatus('${pid}','archived')">📦 Archive</button>`);
+    if (current !== 'active') items.push(`<button onclick="event.stopPropagation();changeStatus('${pid}','active')">🔄 Reactivate</button>`);
+
+    // Simple popup via alert substitute
+    const choice = prompt(`Project actions:\n1. ${current !== 'completed' ? 'Complete' : '—'}\n2. ${current !== 'archived' ? 'Archive' : '—'}\n3. ${current !== 'active' ? 'Reactivate' : '—'}\n\nEnter 1, 2, or 3:`);
+    if (choice === '1' && current !== 'completed') changeStatus(pid, 'completed');
+    if (choice === '2' && current !== 'archived') changeStatus(pid, 'archived');
+    if (choice === '3' && current !== 'active') changeStatus(pid, 'active');
+}
+
+// ═══════════════════════════════════════════
+// USER MENU + AUTH
+// ═══════════════════════════════════════════
+function toggleUserMenu() {
+    document.getElementById('userMenu').classList.toggle('show');
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.user-pill') && !e.target.closest('.user-menu')) {
+        document.getElementById('userMenu').classList.remove('show');
+    }
+});
+
+function logout() {
+    localStorage.removeItem('rics_token');
+    localStorage.removeItem('rics_user');
+    window.location.href = '/login';
+}
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (isError ? ' error' : '');
+    setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ═══════════════════════════════════════════
+// BOOTSTRAP
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+</body>
+</html>

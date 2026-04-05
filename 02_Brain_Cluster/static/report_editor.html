@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RICS Report Editor — AI WYSIWYG</title>
+    <!-- TipTap via CDN (UMD builds) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.11.5/dist/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.11.5/dist/index.umd.min.js"></script>
+    <!-- Showdown for MD↔HTML conversion -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0A0A14;
+            --bg-card: #0F172A;
+            --bg-toolbar: #131B2E;
+            --gold: #D4A843;
+            --purple: #4D2D69;
+            --purple-light: #8B6AAD;
+            --green: #4CAF50;
+            --amber: #FF9800;
+            --red: #F44336;
+            --text: #EAEAEA;
+            --text-sec: #A0A0B0;
+            --border: rgba(255,255,255,0.06);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--bg-card) 100%);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--gold);
+            flex-shrink: 0;
+        }
+        .header h1 {
+            font-size: 16px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .header .info {
+            color: var(--text-sec);
+            font-size: 11px;
+            font-family: monospace;
+        }
+        .header .status-badge {
+            background: var(--green);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            background: var(--bg-toolbar);
+            padding: 8px 16px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            align-items: center;
+        }
+        .toolbar .sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+        .toolbar button {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-sec);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .toolbar button:hover {
+            background: rgba(255,255,255,0.06);
+            color: var(--text);
+            border-color: var(--border);
+        }
+        .toolbar button.active {
+            background: var(--purple);
+            color: white;
+            border-color: var(--purple-light);
+        }
+        .toolbar button.ai-btn {
+            background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05));
+            border: 1px solid rgba(212,168,67,0.3);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .toolbar button.ai-btn:hover {
+            background: linear-gradient(135deg, rgba(212,168,67,0.25), rgba(212,168,67,0.1));
+            border-color: var(--gold);
+        }
+        .toolbar button.save-btn {
+            background: var(--green);
+            color: white;
+            font-weight: 700;
+            padding: 5px 16px;
+        }
+        .toolbar button.save-btn:hover {
+            background: #43A047;
+        }
+        .toolbar button.save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ── AI Panel ── */
+        .ai-panel {
+            display: none;
+            background: var(--bg-toolbar);
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .ai-panel.visible { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .ai-panel .label {
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-right: 8px;
+        }
+        .ai-panel button {
+            background: rgba(77,45,105,0.3);
+            border: 1px solid rgba(139,106,173,0.3);
+            color: var(--purple-light);
+            padding: 4px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.15s;
+        }
+        .ai-panel button:hover {
+            background: var(--purple);
+            color: white;
+            border-color: var(--purple-light);
+        }
+        .ai-panel button.processing {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        /* ── Editor ── */
+        .editor-container {
+            flex: 1;
+            overflow: auto;
+            padding: 24px;
+        }
+        .ProseMirror {
+            max-width: 850px;
+            margin: 0 auto;
+            min-height: 500px;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text);
+        }
+        .ProseMirror h1 { font-size: 22px; color: var(--gold); margin: 20px 0 10px; font-weight: 700; border-bottom: 2px solid var(--purple); padding-bottom: 6px; }
+        .ProseMirror h2 { font-size: 18px; color: var(--purple-light); margin: 16px 0 8px; font-weight: 600; }
+        .ProseMirror h3 { font-size: 15px; color: var(--purple-light); margin: 12px 0 6px; font-weight: 600; }
+        .ProseMirror p { margin-bottom: 8px; }
+        .ProseMirror strong { color: var(--gold); }
+        .ProseMirror em { color: var(--text-sec); }
+        .ProseMirror hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+        .ProseMirror ul, .ProseMirror ol { padding-left: 24px; margin-bottom: 10px; }
+        .ProseMirror li { margin-bottom: 4px; }
+        .ProseMirror blockquote {
+            border-left: 3px solid var(--gold);
+            padding-left: 16px;
+            margin: 10px 0;
+            color: var(--text-sec);
+            font-style: italic;
+        }
+        .ProseMirror code {
+            background: rgba(77,45,105,0.2);
+            color: var(--purple-light);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+        }
+        .ProseMirror table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .ProseMirror th {
+            background: var(--purple);
+            color: white;
+            padding: 6px 10px;
+            text-align: left;
+            font-size: 12px;
+        }
+        .ProseMirror td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .ProseMirror .selection { background: rgba(212,168,67,0.2); }
+        .ProseMirror:focus { outline: none; }
+        .ProseMirror p.is-editor-empty:first-child::before {
+            content: 'Start editing your RICS report...';
+            color: var(--text-sec);
+            float: left;
+            pointer-events: none;
+        }
+
+        /* ── Status Bar ── */
+        .statusbar {
+            background: var(--bg-toolbar);
+            padding: 6px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--text-sec);
+            font-family: monospace;
+            flex-shrink: 0;
+        }
+        .statusbar .tag {
+            background: rgba(77,45,105,0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--green);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 13px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--red); }
+
+        /* ── Loading overlay ── */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10,10,20,0.7);
+            z-index: 900;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .loading-overlay.show { display: flex; }
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📝 RICS REPORT EDITOR</h1>
+        <span class="info" id="projectInfo">Loading...</span>
+        <span class="status-badge" id="statusBadge">READY</span>
+    </div>
+
+    <!-- Format Toolbar -->
+    <div class="toolbar" id="formatToolbar">
+        <button onclick="cmd('toggleBold')" title="Bold"><b>B</b></button>
+        <button onclick="cmd('toggleItalic')" title="Italic"><i>I</i></button>
+        <button onclick="cmd('toggleStrike')" title="Strikethrough"><s>S</s></button>
+        <button onclick="cmd('toggleCode')" title="Inline Code">&lt;/&gt;</button>
+        <div class="sep"></div>
+        <button onclick="heading(1)" title="Heading 1">H1</button>
+        <button onclick="heading(2)" title="Heading 2">H2</button>
+        <button onclick="heading(3)" title="Heading 3">H3</button>
+        <button onclick="cmd('setParagraph')" title="Paragraph">¶</button>
+        <div class="sep"></div>
+        <button onclick="cmd('toggleBulletList')" title="Bullet List">• List</button>
+        <button onclick="cmd('toggleOrderedList')" title="Numbered List">1. List</button>
+        <button onclick="cmd('toggleBlockquote')" title="Blockquote">" Quote</button>
+        <button onclick="cmd('setHorizontalRule')" title="Divider">―</button>
+        <div class="sep"></div>
+        <button onclick="cmd('undo')" title="Undo">↩</button>
+        <button onclick="cmd('redo')" title="Redo">↪</button>
+        <div class="sep"></div>
+        <button class="ai-btn" onclick="toggleAI()" title="AI Tools">🤖 AI</button>
+        <div style="flex:1"></div>
+        <button class="save-btn" id="saveBtn" onclick="saveReport()" disabled>💾 SAVE</button>
+    </div>
+
+    <!-- AI Toolbar -->
+    <div class="ai-panel" id="aiPanel">
+        <span class="label">🤖 GEMINI AI:</span>
+        <button onclick="aiAction('improve')">✨ Improve</button>
+        <button onclick="aiAction('concise')">✂️ Concise</button>
+        <button onclick="aiAction('formal')">🎩 Formal</button>
+        <button onclick="aiAction('expand')">📖 Expand</button>
+        <button onclick="aiAction('summarize')">📋 Summarize</button>
+        <button onclick="aiAction('explain')">💡 Explain</button>
+        <button onclick="aiAction('translate_ar')">🇦🇪 Arabic</button>
+        <button onclick="aiAction('translate_en')">🇬🇧 English</button>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor-container">
+        <div id="editor"></div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="statusbar">
+        <div>
+            <span id="wordCount">0 words</span>
+            <span class="tag" id="versionTag">v?</span>
+        </div>
+        <div>
+            <span id="lastSaved">Not saved</span>
+            <span class="tag">Gemini 3 Flash</span>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+        <div style="color: var(--gold); font-weight: 600;">Processing with Gemini AI...</div>
+    </div>
+
+    <script>
+    // ═══════════════════════════════════════════
+    // CONFIG
+    // ═══════════════════════════════════════════
+    const API_BASE = window.location.origin + '/api';
+    const params = new URLSearchParams(window.location.search);
+    const PROJECT_ID = params.get('project') || params.get('pid') || '';
+
+    let editor = null;
+    let isDirty = false;
+    let currentVersion = '?';
+    const converter = new showdown.Converter({
+        tables: true,
+        strikethrough: true,
+        tasklists: true,
+        simpleLineBreaks: false,
+    });
+
+    // ═══════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async () => {
+        document.getElementById('projectInfo').textContent = PROJECT_ID || 'No project';
+
+        // Initialize TipTap
+        const { Editor } = window['@tiptap/core'] || {};
+        const { StarterKit } = window['@tiptap/starter-kit'] || {};
+
+        if (!Editor || !StarterKit) {
+            // Fallback: use contenteditable
+            initFallbackEditor();
+        } else {
+            editor = new Editor({
+                element: document.getElementById('editor'),
+                extensions: [StarterKit],
+                content: '<p>Loading report...</p>',
+                onUpdate: () => {
+                    isDirty = true;
+                    document.getElementById('saveBtn').disabled = false;
+                    updateWordCount();
+                },
+            });
+        }
+
+        // Load report content
+        if (PROJECT_ID) {
+            await loadReport();
+        }
+    });
+
+    function initFallbackEditor() {
+        // Fallback: basic contenteditable div
+        const el = document.getElementById('editor');
+        el.setAttribute('contenteditable', 'true');
+        el.style.minHeight = '500px';
+        el.style.outline = 'none';
+        el.style.maxWidth = '850px';
+        el.style.margin = '0 auto';
+        el.style.fontSize = '14px';
+        el.style.lineHeight = '1.7';
+        el.innerHTML = '<p>Loading report...</p>';
+        el.addEventListener('input', () => {
+            isDirty = true;
+            document.getElementById('saveBtn').disabled = false;
+            updateWordCount();
+        });
+        editor = {
+            _fallback: true,
+            getHTML: () => el.innerHTML,
+            commands: {
+                setContent: (html) => { el.innerHTML = html; },
+            },
+            isActive: () => false,
+        };
+    }
+
+    // ═══════════════════════════════════════════
+    // COMMANDS
+    // ═══════════════════════════════════════════
+    function cmd(command) {
+        if (!editor || editor._fallback) return;
+        editor.chain().focus()[command]().run();
+    }
+
+    function heading(level) {
+        if (!editor || editor._fallback) return;
+        editor.chain().focus().toggleHeading({ level }).run();
+    }
+
+    function toggleAI() {
+        const panel = document.getElementById('aiPanel');
+        panel.classList.toggle('visible');
+    }
+
+    // ═══════════════════════════════════════════
+    // LOAD / SAVE
+    // ═══════════════════════════════════════════
+    async function loadReport() {
+        try {
+            const res = await fetch(`${API_BASE}/projects/${PROJECT_ID}/report-md`);
+            if (!res.ok) throw new Error('Failed to load');
+            const data = await res.json();
+            
+            if (data.content) {
+                const html = converter.makeHtml(data.content);
+                if (editor._fallback) {
+                    editor.commands.setContent(html);
+                } else {
+                    editor.commands.setContent(html);
+                }
+                isDirty = false;
+                document.getElementById('saveBtn').disabled = true;
+                updateWordCount();
+                showToast('📄 Report loaded');
+            }
+        } catch (e) {
+            showToast('❌ Failed to load: ' + e.message, true);
+        }
+
+        // Load version info
+        try {
+            const vRes = await fetch(`${API_BASE}/projects/${PROJECT_ID}/report-versions`);
+            const vData = await vRes.json();
+            currentVersion = vData.active_version_id || 'v' + vData.total;
+            document.getElementById('versionTag').textContent = currentVersion;
+        } catch (_) {}
+    }
+
+    async function saveReport() {
+        if (!isDirty || !PROJECT_ID) return;
+        
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saving...';
+        document.getElementById('statusBadge').textContent = 'SAVING';
+        document.getElementById('statusBadge').style.background = 'var(--amber)';
+
+        try {
+            const html = editor._fallback ? editor.getHTML() : editor.getHTML();
+            // Convert HTML back to Markdown
+            const md = converter.makeMarkdown ? converter.makeMarkdown(html) : htmlToMd(html);
+            
+            const res = await fetch(`${API_BASE}/projects/${PROJECT_ID}/report-md`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: md, changes_summary: 'Edited via TipTap web editor' }),
+            });
+            
+            const data = await res.json();
+            if (data.status === 'success') {
+                isDirty = false;
+                currentVersion = data.version?.version_id || currentVersion;
+                document.getElementById('versionTag').textContent = currentVersion;
+                document.getElementById('lastSaved').textContent = 'Saved ' + new Date().toLocaleTimeString();
+                document.getElementById('statusBadge').textContent = 'SAVED';
+                document.getElementById('statusBadge').style.background = 'var(--green)';
+                showToast(`✅ Saved as ${currentVersion}${data.pdf_regenerated ? ' + PDF' : ''}`);
+            } else {
+                throw new Error(data.detail || 'Save failed');
+            }
+        } catch (e) {
+            showToast('❌ Save failed: ' + e.message, true);
+            document.getElementById('statusBadge').textContent = 'ERROR';
+            document.getElementById('statusBadge').style.background = 'var(--red)';
+        }
+        
+        btn.disabled = !isDirty;
+        btn.textContent = '💾 SAVE';
+    }
+
+    // Simple HTML to Markdown conversion
+    function htmlToMd(html) {
+        let md = html;
+        md = md.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
+        md = md.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
+        md = md.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
+        md = md.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n');
+        md = md.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
+        md = md.replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**');
+        md = md.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
+        md = md.replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*');
+        md = md.replace(/<s[^>]*>(.*?)<\/s>/gi, '~~$1~~');
+        md = md.replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`');
+        md = md.replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gis, '> $1\n\n');
+        md = md.replace(/<hr[^>]*\/?>/gi, '\n---\n\n');
+        md = md.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
+        md = md.replace(/<[ou]l[^>]*>/gi, '\n');
+        md = md.replace(/<\/[ou]l>/gi, '\n');
+        md = md.replace(/<p[^>]*>(.*?)<\/p>/gis, '$1\n\n');
+        md = md.replace(/<br[^>]*\/?>/gi, '\n');
+        md = md.replace(/<[^>]+>/g, '');
+        md = md.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+        md = md.replace(/\n{3,}/g, '\n\n');
+        return md.trim();
+    }
+
+    // ═══════════════════════════════════════════
+    // AI ACTIONS
+    // ═══════════════════════════════════════════
+    async function aiAction(action) {
+        let selectedText = '';
+        
+        // Get selected text from editor
+        if (editor && !editor._fallback) {
+            const { from, to } = editor.state.selection;
+            selectedText = editor.state.doc.textBetween(from, to, ' ');
+        } else {
+            selectedText = window.getSelection().toString();
+        }
+
+        if (!selectedText || selectedText.trim().length < 3) {
+            showToast('⚠️ Select some text first, then use AI', true);
+            return;
+        }
+
+        // Show loading
+        document.getElementById('loading').classList.add('show');
+        const btns = document.querySelectorAll('.ai-panel button');
+        btns.forEach(b => b.classList.add('processing'));
+
+        try {
+            const res = await fetch(`${API_BASE}/projects/${PROJECT_ID}/report-ai-edit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: selectedText, action }),
+            });
+            
+            const data = await res.json();
+            if (data.status === 'success' && data.result) {
+                // Replace selected text with AI result
+                if (editor && !editor._fallback) {
+                    const { from, to } = editor.state.selection;
+                    editor.chain()
+                        .focus()
+                        .deleteRange({ from, to })
+                        .insertContentAt(from, data.result)
+                        .run();
+                } else {
+                    // Fallback: replace via execCommand
+                    document.execCommand('insertText', false, data.result);
+                }
+                
+                isDirty = true;
+                document.getElementById('saveBtn').disabled = false;
+                showToast(`🤖 AI ${action}: done`);
+            } else {
+                throw new Error(data.detail || 'AI failed');
+            }
+        } catch (e) {
+            showToast('❌ AI error: ' + e.message, true);
+        }
+
+        document.getElementById('loading').classList.remove('show');
+        btns.forEach(b => b.classList.remove('processing'));
+    }
+
+    // ═══════════════════════════════════════════
+    // UTILS
+    // ═══════════════════════════════════════════
+    function updateWordCount() {
+        let text = '';
+        if (editor && !editor._fallback) {
+            text = editor.state.doc.textContent;
+        } else {
+            text = document.getElementById('editor').innerText;
+        }
+        const words = text.split(/\s+/).filter(w => w.length > 0).length;
+        document.getElementById('wordCount').textContent = words + ' words';
+    }
+
+    function showToast(msg, isError = false) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show' + (isError ? ' error' : '');
+        setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    // Keyboard shortcut: Ctrl+S
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            saveReport();
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RICS Report Editor</title>
+    <!-- EasyMDE Markdown Editor -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <!-- Marked for preview rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --rics-purple: #4D2D69;
+            --rics-purple-light: #6B4D8A;
+            --rics-gold: #D4A843;
+            --rics-dark: #1A1625;
+            --bg-dark: #0F0D15;
+            --bg-card: #1A1625;
+            --text-primary: #EAEAEA;
+            --text-secondary: #A0A0B0;
+            --rating-green: #4CAF50;
+            --rating-amber: #FF9800;
+            --rating-red: #F44336;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            background: linear-gradient(135deg, var(--rics-purple), var(--rics-purple-light));
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--rics-gold);
+        }
+        .topbar h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+        .topbar .project-info {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+        .topbar .btn-group { display: flex; gap: 8px; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .btn-save { background: var(--rating-green); color: white; }
+        .btn-pdf { background: var(--rics-purple); color: white; }
+        .btn-voice { background: var(--rating-amber); color: white; }
+        .btn-version { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--rics-purple); }
+
+        /* ===== CONDITION DASHBOARD ===== */
+        .dashboard {
+            background: var(--bg-card);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-badge {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+        }
+        .stat-label { font-size: 12px; color: var(--text-secondary); }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rating-green), var(--rics-gold));
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Section Navigator */
+        .section-nav {
+            width: 200px;
+            background: var(--bg-card);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            overflow-y: auto;
+            padding: 12px 0;
+        }
+        .nav-header {
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--rics-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-item {
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); }
+        .nav-item.active {
+            background: rgba(77,45,105,0.3);
+            border-left-color: var(--rics-purple);
+            color: white;
+        }
+        .nav-badge {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .editor-panel .EasyMDEContainer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-panel .EasyMDEContainer .CodeMirror {
+            flex: 1;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            border: none;
+            font-size: 14px;
+        }
+        .editor-panel .editor-toolbar {
+            background: var(--bg-card);
+            border: none;
+        }
+        .editor-panel .editor-toolbar button {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            width: 45%;
+            background: white;
+            overflow-y: auto;
+            border-left: 1px solid rgba(255,255,255,0.05);
+            padding: 24px;
+            color: #231F20;
+        }
+        .preview-panel h1 { color: var(--rics-purple); font-size: 22px; margin-bottom: 12px; }
+        .preview-panel h2 { color: var(--rics-purple); font-size: 16px; border-bottom: 2px solid var(--rics-purple); padding-bottom: 4px; margin: 16px 0 8px; }
+        .preview-panel h3 { color: var(--rics-purple); font-size: 13px; margin: 12px 0 6px; }
+        .preview-panel table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+        .preview-panel th { background: var(--rics-purple); color: white; padding: 6px 8px; text-align: left; }
+        .preview-panel td { padding: 4px 8px; border-bottom: 1px solid #ddd; }
+
+        /* ===== VERSION SELECTOR ===== */
+        .version-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .version-modal.show { display: flex; }
+        .version-content {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .version-item {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .version-item:hover { background: rgba(255,255,255,0.05); }
+        .version-item .final-badge {
+            background: var(--rating-green);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* ===== VOICE OVERLAY ===== */
+        .voice-overlay {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--rating-amber);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 50;
+            animation: pulse 1.5s infinite;
+        }
+        .voice-overlay.show { display: block; }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,152,0,0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(255,152,0,0); }
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--rating-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.3s;
+            z-index: 200;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div>
+            <h1>📄 RICS Report Editor</h1>
+            <div class="project-info" id="projectInfo">Loading project...</div>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-voice" onclick="startVoiceEdit()">🎤 Voice</button>
+            <button class="btn btn-save" onclick="saveReport()">💾 Save</button>
+            <button class="btn btn-pdf" onclick="generatePDF()">📄 PDF</button>
+            <button class="btn btn-version" onclick="showVersions()">📦 Versions</button>
+        </div>
+    </div>
+
+    <!-- CONDITION DASHBOARD -->
+    <div class="dashboard">
+        <div class="stat">
+            <div class="stat-badge" style="background: var(--rating-red)" id="urgentCount">0</div>
+            <span class="stat-label">Urgent</span>
+        </div>
+        <div class="stat">
+            <div class="stat-badge" style="background: var(--rating-amber)" id="attentionCount">0</div>
+            <span class="stat-label">Attention</span>
+        </div>
+        <div class="stat">
+            <div class="stat-badge" style="background: var(--rating-green)" id="okCount">0</div>
+            <span class="stat-label">OK</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <span class="stat-label" id="progressLabel">0% complete</span>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- Section Navigator -->
+        <div class="section-nav">
+            <div class="nav-header">Sections</div>
+            <div class="nav-item active" data-section="A" onclick="jumpToSection('A')">
+                <span class="nav-badge" style="background: var(--rics-purple)">A</span> About
+            </div>
+            <div class="nav-item" data-section="B" onclick="jumpToSection('B')">
+                <span class="nav-badge" style="background: var(--rics-purple)">B</span> Opinion
+            </div>
+            <div class="nav-item" data-section="C" onclick="jumpToSection('C')">
+                <span class="nav-badge" style="background: var(--rics-purple)">C</span> Property
+            </div>
+            <div class="nav-item" data-section="D" onclick="jumpToSection('D')">
+                <span class="nav-badge" style="background: var(--rating-amber)">D</span> Outside
+            </div>
+            <div class="nav-item" data-section="E" onclick="jumpToSection('E')">
+                <span class="nav-badge" style="background: var(--rating-red)">E</span> Inside
+            </div>
+            <div class="nav-item" data-section="F" onclick="jumpToSection('F')">
+                <span class="nav-badge" style="background: var(--rating-amber)">F</span> Services
+            </div>
+            <div class="nav-item" data-section="G" onclick="jumpToSection('G')">
+                <span class="nav-badge" style="background: var(--rating-green)">G</span> Grounds
+            </div>
+            <div class="nav-item" data-section="H" onclick="jumpToSection('H')">
+                <span class="nav-badge" style="background: var(--rics-purple)">H</span> Legal
+            </div>
+            <div class="nav-item" data-section="I" onclick="jumpToSection('I')">
+                <span class="nav-badge" style="background: var(--rics-purple)">I</span> Risks
+            </div>
+            <div class="nav-item" data-section="J" onclick="jumpToSection('J')">
+                <span class="nav-badge" style="background: var(--rics-purple)">J</span> Energy
+            </div>
+            <div class="nav-item" data-section="K" onclick="jumpToSection('K')">
+                <span class="nav-badge" style="background: var(--rics-purple)">K</span> Declaration
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-panel">
+            <textarea id="mdEditor"></textarea>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-panel" id="previewPanel">
+            <p style="color: #999; text-align: center; padding: 40px;">
+                Loading report preview...
+            </p>
+        </div>
+    </div>
+
+    <!-- VERSION MODAL -->
+    <div class="version-modal" id="versionModal">
+        <div class="version-content">
+            <h2 style="color: var(--rics-gold); margin-bottom: 16px;">📦 Report Versions</h2>
+            <div id="versionList"></div>
+            <button class="btn" style="margin-top: 16px; background: var(--rics-purple); color: white;" onclick="hideVersions()">Close</button>
+        </div>
+    </div>
+
+    <!-- VOICE OVERLAY -->
+    <div class="voice-overlay" id="voiceOverlay">
+        🎤 Listening... Speak your edit command
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ===== CONFIG =====
+        const params = new URLSearchParams(window.location.search);
+        const PROJECT_ID = params.get('project') || 'TEST-001';
+        const API_BASE = window.location.origin;
+
+        let easyMDE;
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize EasyMDE
+            easyMDE = new EasyMDE({
+                element: document.getElementById('mdEditor'),
+                autofocus: true,
+                spellChecker: false,
+                status: false,
+                toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|',
+                           'link', 'image', 'table', '|', 'preview', 'side-by-side', 'fullscreen'],
+                theme: 'dark',
+            });
+
+            // Live preview update
+            easyMDE.codemirror.on('change', () => {
+                updatePreview();
+            });
+
+            // Load report
+            loadReport();
+        });
+
+        // ===== API CALLS =====
+        async function loadReport() {
+            try {
+                const res = await fetch(`${API_BASE}/api/projects/${PROJECT_ID}/report-md`);
+                if (res.ok) {
+                    const data = await res.json();
+                    easyMDE.value(data.content);
+                    document.getElementById('projectInfo').textContent = `Project: ${PROJECT_ID}`;
+                    updatePreview();
+                    showToast('Report loaded ✅');
+                } else {
+                    easyMDE.value('# No report found\n\nGenerate a report first using the mobile app or API.');
+                }
+            } catch (e) {
+                console.error('Load error:', e);
+                easyMDE.value('# Connection Error\n\nCould not connect to the server.');
+            }
+        }
+
+        async function saveReport() {
+            try {
+                const res = await fetch(`${API_BASE}/api/projects/${PROJECT_ID}/report-md`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: easyMDE.value(),
+                        changes_summary: 'Edited via web editor'
+                    })
+                });
+                if (res.ok) {
+                    showToast('Saved ✅');
+                }
+            } catch (e) {
+                showToast('Save failed ❌');
+            }
+        }
+
+        async function generatePDF() {
+            showToast('Generating PDF... ⏳');
+            try {
+                const res = await fetch(`${API_BASE}/api/projects/${PROJECT_ID}/generate-final-report`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({})
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    showToast(`PDF generated: ${data.stats.total_elements} elements ✅`);
+                }
+            } catch (e) {
+                showToast('PDF generation failed ❌');
+            }
+        }
+
+        function startVoiceEdit() {
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                showToast('Speech recognition not supported ❌');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-GB';
+            recognition.continuous = false;
+
+            document.getElementById('voiceOverlay').classList.add('show');
+
+            recognition.onresult = async (event) => {
+                const text = event.results[0][0].transcript;
+                document.getElementById('voiceOverlay').classList.remove('show');
+                showToast(`Voice: "${text}" — Applying...`);
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/projects/${PROJECT_ID}/report-voice-edit`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({voice_text: text, confirm: true})
+                    });
+                    if (res.ok) {
+                        loadReport();
+                        showToast('Voice edit applied ✅');
+                    }
+                } catch (e) {
+                    showToast('Voice edit failed ❌');
+                }
+            };
+
+            recognition.onerror = () => {
+                document.getElementById('voiceOverlay').classList.remove('show');
+                showToast('Voice recognition error ❌');
+            };
+
+            recognition.start();
+        }
+
+        async function showVersions() {
+            try {
+                const res = await fetch(`${API_BASE}/api/projects/${PROJECT_ID}/report-versions`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const list = document.getElementById('versionList');
+                    list.innerHTML = data.versions.map(v => `
+                        <div class="version-item" onclick="loadVersion('${v.version_id}')">
+                            <div>
+                                <strong>${v.label}</strong><br>
+                                <small style="color: var(--text-secondary)">${v.timestamp}</small>
+                            </div>
+                            ${v.is_final ? '<span class="final-badge">FINAL</span>' : ''}
+                        </div>
+                    `).join('');
+                    document.getElementById('versionModal').classList.add('show');
+                }
+            } catch (e) {
+                showToast('Could not load versions ❌');
+            }
+        }
+
+        function hideVersions() {
+            document.getElementById('versionModal').classList.remove('show');
+        }
+
+        async function loadVersion(versionId) {
+            hideVersions();
+            showToast(`Loading ${versionId}...`);
+            // For now, just reload the latest
+            loadReport();
+        }
+
+        // ===== PREVIEW =====
+        function updatePreview() {
+            const md = easyMDE.value();
+            const html = marked.parse(md);
+            document.getElementById('previewPanel').innerHTML = html;
+
+            // Count conditions from MD
+            const urgent = (md.match(/rating-3/g) || []).length;
+            const attention = (md.match(/rating-2/g) || []).length;
+            const ok = (md.match(/rating-1/g) || []).length;
+            const total = urgent + attention + ok;
+            const progress = total > 0 ? Math.round(((attention + ok) / total) * 100) : 0;
+
+            document.getElementById('urgentCount').textContent = urgent;
+            document.getElementById('attentionCount').textContent = attention;
+            document.getElementById('okCount').textContent = ok;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressLabel').textContent = progress + '% healthy';
+        }
+
+        // ===== NAVIGATION =====
+        function jumpToSection(code) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector(`[data-section="${code}"]`).classList.add('active');
+
+            const cm = easyMDE.codemirror;
+            const content = cm.getValue();
+            const marker = `data-code="${code}"`;
+            const idx = content.indexOf(marker);
+            if (idx >= 0) {
+                const line = content.substring(0, idx).split('\n').length - 1;
+                cm.setCursor(line, 0);
+                cm.scrollIntoView({line: line, ch: 0}, 100);
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

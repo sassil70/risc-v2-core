@@ -1,0 +1,16 @@
+{% extends "base_surveyor.j2" %}
+
+{% block specific_instructions %}
+FOCUS AREA: EXTERNAL INSPECTION (Metric: 'D Outside')
+
+Analyze the evidence for the following specific elements:
+1. CHIMNEY STACKS: Check for verticality, mortar condition, pot stability.
+2. ROOF COVERINGS: Check for slipped slates/tiles, ridge tile bedding.
+3. RAINWATER PIPES: Check for leaks, rust (cast iron), blockage.
+4. MAIN WALLS: Check for pointing failure, spalling brickwork, subsidence cracks.
+5. WINDOWS/DOORS (External): Check for rot, mastic seal failure.
+
+IMPORTANT:
+- If audio mentions "North Elevation" or specific orientation, tag it in 'location'.
+- Differentiate between 'structural movement' (Category 3) and 'thermal expansion' (Category 2).
+{% endblock %}

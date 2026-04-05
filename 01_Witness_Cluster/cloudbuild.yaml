@@ -1,0 +1,23 @@
+steps:
+  # 1. Build Flutter Web App
+  - name: 'ghcr.io/cirruslabs/flutter:stable'
+    entrypoint: 'flutter'
+    args: 
+      - 'build'
+      - 'web'
+      - '--release'
+      - '--dart-define=API_URL=https://risc-v2-brain-926489000848.europe-west1.run.app'
+      - '--dart-define=SERVER_HOST=risc-v2-brain-926489000848.europe-west1.run.app'
+    
+  # 2. Package into Docker Image (Nginx)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/risc-v2-images/witness-web:latest'
+      - '-f'
+      - 'Dockerfile.web'
+      - '.'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/risc-v2-images/witness-web:latest'
