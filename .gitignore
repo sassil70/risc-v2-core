@@ -64,3 +64,7 @@ native_sdk/
 
 # ----- Project Data (runtime generated, do not commit) -----
 project_data/
+
+# ----- Secrets (NEVER COMMIT) -----
+.secrets
+.env.production
