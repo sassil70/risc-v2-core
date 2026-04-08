@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>RISC Witness needs camera access to photograph property defects and conditions during inspections</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>RISC Witness needs microphone access to record voice notes for floor plan descriptions</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RISC Witness needs photo library access to save and attach inspection evidence photos</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>RISC Witness uses location to tag inspection photos with property coordinates</string>
 </dict>
 </plist>
