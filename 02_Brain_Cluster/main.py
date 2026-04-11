@@ -158,6 +158,45 @@ class LogEntry(BaseModel):
 @asynccontextmanager
 async def lifespan(app):
     await db.connect()
+    # Auto-seed demo users on startup (safe — uses ON CONFLICT DO NOTHING)
+    try:
+        from core.security import get_password_hash
+        # Ensure users table exists
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                full_name VARCHAR(200),
+                role VARCHAR(50) DEFAULT 'surveyor',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS access_events (
+                id BIGSERIAL PRIMARY KEY,
+                user_id UUID NOT NULL,
+                event_type VARCHAR(50) NOT NULL,
+                metadata JSONB DEFAULT '{}',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            )
+        """)
+        # Seed demo users
+        for username, password, fullname, role in [
+            ("demo", "demo1234", "Apple Review Demo Account", "surveyor"),
+            ("admin", "risc2026", "System Administrator", "admin"),
+            ("surveyor", "risc2026", "RICS Surveyor", "surveyor"),
+        ]:
+            pw_hash = get_password_hash(password)
+            await db.execute("""
+                INSERT INTO users (username, password_hash, full_name, role)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT (username) DO NOTHING
+            """, username, pw_hash, fullname, role)
+        count = await db.fetchval("SELECT COUNT(*) FROM users")
+        print(f"[STARTUP] Users seeded successfully. Total users: {count}")
+    except Exception as e:
+        print(f"[STARTUP-WARN] Auto-seed skipped: {e}")
     yield
     await db.disconnect()
 
