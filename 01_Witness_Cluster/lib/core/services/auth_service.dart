@@ -26,6 +26,30 @@ class AuthService {
     ));
   }
 
+  // --- Demo credentials for Apple App Review (Guideline 2.1a) ---
+  static const _demoCredentials = {
+    'demo': 'demo1234',
+    'admin': 'risc2026',
+    'surveyor': 'risc2026',
+  };
+
+  Map<String, dynamic>? _tryDemoLogin(String username, String password) {
+    final expectedPwd = _demoCredentials[username.toLowerCase()];
+    if (expectedPwd != null && expectedPwd == password) {
+      return {
+        'id': 'demo-${username.toLowerCase()}-001',
+        'username': username.toLowerCase(),
+        'full_name': username.toLowerCase() == 'demo'
+            ? 'Apple Review Demo'
+            : username.toLowerCase() == 'admin'
+                ? 'System Administrator'
+                : 'RICS Surveyor',
+        'role': username.toLowerCase() == 'admin' ? 'admin' : 'surveyor',
+      };
+    }
+    return null;
+  }
+
   // --- Login ---
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
@@ -44,6 +68,13 @@ class AuthService {
 
       return user;
     } on DioException catch (e) {
+      // Fallback: Allow demo/review accounts to login offline
+      final demoUser = _tryDemoLogin(username, password);
+      if (demoUser != null) {
+        await _storage.write(key: 'auth_token', value: 'demo_token_${demoUser['id']}');
+        await _storage.write(key: 'user_data', value: jsonEncode(demoUser));
+        return demoUser;
+      }
       if (e.response?.statusCode == 401) {
         throw Exception("Invalid Username or Password");
       }
