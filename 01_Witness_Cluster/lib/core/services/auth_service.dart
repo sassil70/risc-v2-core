@@ -50,8 +50,21 @@ class AuthService {
     return null;
   }
 
-  // --- Login ---
+  // --- Login (Resilient: Demo-First Strategy) ---
+  // Demo/review accounts are checked FIRST for instant access,
+  // then backend is tried for production users.
+  // This ensures the app ALWAYS works for testers/reviewers
+  // regardless of backend or database state.
   Future<Map<String, dynamic>> login(String username, String password) async {
+    // STEP 1: Try demo/offline credentials FIRST (instant, no network needed)
+    final demoUser = _tryDemoLogin(username, password);
+    if (demoUser != null) {
+      await _storage.write(key: 'auth_token', value: 'demo_token_${demoUser['id']}');
+      await _storage.write(key: 'user_data', value: jsonEncode(demoUser));
+      return demoUser;
+    }
+
+    // STEP 2: Try backend API for production users
     try {
       final response = await _dio.post('/auth/login', data: {
         'username': username,
@@ -68,17 +81,10 @@ class AuthService {
 
       return user;
     } on DioException catch (e) {
-      // Fallback: Allow demo/review accounts to login offline
-      final demoUser = _tryDemoLogin(username, password);
-      if (demoUser != null) {
-        await _storage.write(key: 'auth_token', value: 'demo_token_${demoUser['id']}');
-        await _storage.write(key: 'user_data', value: jsonEncode(demoUser));
-        return demoUser;
-      }
       if (e.response?.statusCode == 401) {
         throw Exception("Invalid Username or Password");
       }
-      throw Exception("Connection Error: ${e.message}");
+      throw Exception("Connection Error: Server unreachable. Check your internet connection.");
     }
   }
 

@@ -161,10 +161,16 @@ async def lifespan(app):
     # Auto-seed demo users on startup (safe — uses ON CONFLICT DO NOTHING)
     try:
         from core.security import get_password_hash
-        # Ensure users table exists
+        # Ensure UUID extension exists
+        try:
+            await db.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+            print("[STARTUP] uuid-ossp extension ready")
+        except Exception as ext_err:
+            print(f"[STARTUP-WARN] uuid-ossp: {ext_err}")
+        # Ensure users table exists (gen_random_uuid works on PG 13+)
         await db.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 username VARCHAR(100) UNIQUE NOT NULL,
                 password_hash VARCHAR(255) NOT NULL,
                 full_name VARCHAR(200),
@@ -181,6 +187,7 @@ async def lifespan(app):
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             )
         """)
+        print("[STARTUP] Tables verified OK")
         # Seed demo users
         for username, password, fullname, role in [
             ("demo", "demo1234", "Apple Review Demo Account", "surveyor"),
@@ -194,9 +201,11 @@ async def lifespan(app):
                 ON CONFLICT (username) DO NOTHING
             """, username, pw_hash, fullname, role)
         count = await db.fetchval("SELECT COUNT(*) FROM users")
-        print(f"[STARTUP] Users seeded successfully. Total users: {count}")
+        print(f"[STARTUP] ✅ Users seeded. Total users: {count}")
     except Exception as e:
-        print(f"[STARTUP-WARN] Auto-seed skipped: {e}")
+        import traceback
+        print(f"[STARTUP-ERROR] ❌ Auto-seed FAILED: {e}")
+        print(traceback.format_exc())
     yield
     await db.disconnect()
 
