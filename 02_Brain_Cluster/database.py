@@ -27,22 +27,22 @@ class Database:
             await self.pool.close()
 
     async def execute(self, query: str, *args):
-        if not self.pool: return # Ignore or raise custom OfflineError
+        if not self.pool: raise Exception("Database Offline Mode")
         async with self.pool.acquire() as connection:
             return await connection.execute(query, *args)
 
     async def fetchrow(self, query: str, *args):
-        if not self.pool: return None
+        if not self.pool: raise Exception("Database Offline Mode")
         async with self.pool.acquire() as connection:
             return await connection.fetchrow(query, *args)
 
     async def fetch(self, query: str, *args):
-        if not self.pool: raise Exception("Offline Mode")
+        if not self.pool: raise Exception("Database Offline Mode")
         async with self.pool.acquire() as connection:
             return await connection.fetch(query, *args)
 
     async def fetchval(self, query: str, *args):
-        if not self.pool: raise Exception("Offline Mode")
+        if not self.pool: raise Exception("Database Offline Mode")
         async with self.pool.acquire() as connection:
             return await connection.fetchval(query, *args)
 

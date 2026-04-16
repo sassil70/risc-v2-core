@@ -235,7 +235,7 @@ class _PartialReportViewerScreenState extends State<PartialReportViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final gold = const Color(0xFFFFD700);
+    const gold = Color(0xFFFFD700);
 
     return Scaffold(
       backgroundColor: const Color(0xFF05080D),
@@ -269,7 +269,7 @@ class _PartialReportViewerScreenState extends State<PartialReportViewerScreen> {
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(color: gold))
+          ? const Center(child: CircularProgressIndicator(color: gold))
           : _reportData == null
               ? _buildEmptyState(gold)
               : _buildReportBody(),

@@ -182,30 +182,24 @@ async def add_room(project_id: str, room: AddRoomRequest):
         "status": "pending"
     }
     
-    # 2. Append to JSONB array using PostgreSQL operators
-    # We use jsonb_set to append. 
-    # Or simpler: site_metadata = site_metadata || '{"rooms": [...]}' if strictly appending logic needed.
-    # But jsonb_set with append is tricky in standard SQL without index.
-    # Easier: Read -> Update in App -> Write (Optimistic Concurrency not critical here)
-    # OR use jsonb_insert
-    
-    # Let's use Read-Modify-Write for safety and simplicity in Python
-    select_query = "SELECT site_metadata FROM projects WHERE id = $1"
-    row = await db.fetchrow(select_query, project_id)
+    # 2. Append to JSONB array using PostgreSQL operators (Atomic Update avoids Race Condition)
+    room_json = json.dumps(new_room)
+    update_query = """
+        UPDATE projects
+        SET site_metadata = jsonb_set(
+            COALESCE(site_metadata, '{}'::jsonb),
+            '{rooms}',
+            COALESCE((site_metadata->'rooms')::jsonb, '[]'::jsonb) || $1::jsonb
+        )
+        WHERE id = $2
+        RETURNING site_metadata
+    """
+    row = await db.fetchrow(update_query, room_json, project_id)
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")
-    
+        
     metadata = json.loads(row['site_metadata']) if isinstance(row['site_metadata'], str) else row['site_metadata']
-    if not metadata: metadata = {}
-    
-    rooms = metadata.get('rooms', [])
-    rooms.append(new_room)
-    metadata['rooms'] = rooms
-    
-    update_query = "UPDATE projects SET site_metadata = $1 WHERE id = $2"
-    await db.execute(update_query, json.dumps(metadata), project_id)
-    
-    return rooms
+    return metadata.get('rooms', [])
 
 from services.synthesis_engine import synthesize_property_master_state
 
@@ -788,21 +782,30 @@ async def toggle_photo_exclude(project_id: str, room_id: str, payload: dict):
     }
 
 @router.post("/projects/{project_id}/rooms/{room_id}/upload_evidence")
-async def upload_evidence(project_id: str, room_id: str, evidence: UploadFile = File(...)):
+async def upload_evidence(project_id: str, room_id: str, evidence: UploadFile = File(...), session_id: Optional[str] = Form(None)):
     """
     Receive a zip file containing evidence photos/audio for a room.
-    Extracts into the session directory under room_id/Context_X/ structure.
+    Extracts safely to disk to prevent Memory OOM crashes.
     """
-    session_dir, session_id = await _get_session_dir_for_project(project_id)
+    if session_id:
+        session_dir = await _project_storage_service.get_session_path(session_id)
+    else:
+        session_dir, session_id_fallback = await _get_session_dir_for_project(project_id)
+        session_id = session_id_fallback
+        
     room_dir = os.path.join(session_dir, room_id)
     os.makedirs(room_dir, exist_ok=True)
     
-    try:
-        content = await evidence.read()
-        zip_buffer = io.BytesIO(content)
+    import tempfile
+    import shutil
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as temp_zip:
+        shutil.copyfileobj(evidence.file, temp_zip)
+        temp_zip_path = temp_zip.name
         
+    try:
         extracted_count = 0
-        with zipfile.ZipFile(zip_buffer, 'r') as zf:
+        with zipfile.ZipFile(temp_zip_path, 'r') as zf:
             for member in zf.namelist():
                 # Skip directory entries and hidden files
                 if member.endswith('/') or member.startswith('__MACOSX') or member.startswith('.'):
@@ -825,7 +828,9 @@ async def upload_evidence(project_id: str, room_id: str, evidence: UploadFile = 
     except Exception as e:
         print(f"[Upload Error] {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
+    finally:
+        if os.path.exists(temp_zip_path):
+            os.remove(temp_zip_path)
 async def _get_latest_session_for_project(project_id: str):
     """Resolve the latest session_id for a project from the DB."""
     query = """

@@ -145,7 +145,7 @@ class _PropertyDetailsScreenState extends ConsumerState<PropertyDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final gold = const Color(0xFFFFD700);
+    const gold = Color(0xFFFFD700);
 
     return Scaffold(
       backgroundColor: const Color(0xFF05080D),
@@ -218,7 +218,7 @@ class _PropertyDetailsScreenState extends ConsumerState<PropertyDetailsScreen>
             ),
           ),
           if (_isLoading)
-            Center(child: CircularProgressIndicator(color: gold))
+            const Center(child: CircularProgressIndicator(color: gold))
           else if (_propertyData == null)
             Center(
               child: Text(
@@ -489,7 +489,7 @@ class _PropertyDetailsScreenState extends ConsumerState<PropertyDetailsScreen>
         if (scannedList.isNotEmpty) ...[
           Row(
             children: [
-              Icon(Icons.check_circle, color: green, size: 16),
+              const Icon(Icons.check_circle, color: green, size: 16),
               const SizedBox(width: 6),
               Text(
                 'SCANNED ($scannedRooms)',
@@ -600,11 +600,11 @@ class _PropertyDetailsScreenState extends ConsumerState<PropertyDetailsScreen>
             ),
           ),
           if (scanned) ...[
-            Icon(Icons.camera_alt, color: cyan, size: 12),
+            const Icon(Icons.camera_alt, color: cyan, size: 12),
             const SizedBox(width: 3),
             Text('$imgCount', style: GoogleFonts.spaceMono(color: cyan, fontSize: 10)),
             const SizedBox(width: 8),
-            Icon(Icons.mic, color: gold, size: 12),
+            const Icon(Icons.mic, color: gold, size: 12),
             const SizedBox(width: 3),
             Text('$audioCount', style: GoogleFonts.spaceMono(color: gold, fontSize: 10)),
           ] else

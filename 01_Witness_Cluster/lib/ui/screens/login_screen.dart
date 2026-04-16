@@ -51,8 +51,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     // Theme Accents
-    final neonBlue = const Color(0xFF00E5FF);
-    final dangerRed = const Color(0xFFFF2E63);
+    const neonBlue = Color(0xFF00E5FF);
+    const dangerRed = Color(0xFFFF2E63);
 
     return Scaffold(
       backgroundColor: Colors.black, // Fallback
@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               blurRadius: 20,
                               spreadRadius: 1)
                         ]),
-                    child: Icon(Icons.security, size: 48, color: neonBlue),
+                    child: const Icon(Icons.security, size: 48, color: neonBlue),
                   ).animate().fadeIn(duration: 800.ms).scale(),
 
                   const SizedBox(height: 32),
@@ -229,12 +229,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                         color: dangerRed.withOpacity(0.3))),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.warning_amber_rounded,
+                                    const Icon(Icons.warning_amber_rounded,
                                         color: dangerRed, size: 18),
                                     const SizedBox(width: 8),
                                     Expanded(
                                         child: Text(_error!,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 color: dangerRed,
                                                 fontSize: 12,
                                                 fontFamily: 'SpaceMono'))),

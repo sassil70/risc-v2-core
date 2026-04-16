@@ -28,7 +28,6 @@ void main() {
       archive.addFile(ArchiveFile('test.txt', 12, 'Hello World'.codeUnits));
       final encoder = ZipEncoder();
       final bytes = encoder.encode(archive);
-      if (bytes == null) fail("Failed to create zip");
 
       await zipFile.writeAsBytes(bytes);
 

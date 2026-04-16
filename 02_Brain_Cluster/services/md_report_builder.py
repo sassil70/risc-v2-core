@@ -169,23 +169,39 @@ class MdReportBuilder:
             except Exception as e:
                 logger.warning(f"Gemini unavailable, using fallback: {e}")
         
+        import asyncio
+        elements_to_process = []
         for elem in self.report.get_all_elements():
             if not elem.raw_notes and not elem.photos:
                 elem.condition_rating = ConditionRating.NI
                 elem.narrative = "This element was not accessible or not present at the time of inspection."
                 continue
+            elements_to_process.append(elem)
             
-            if gemini_model:
-                elem.narrative = await self._generate_element_narrative(
-                    elem, gemini_model
-                )
-            else:
-                # Fallback: format raw notes professionally
+        if gemini_model and elements_to_process:
+            batch_size = 5
+            for i in range(0, len(elements_to_process), batch_size):
+                batch = elements_to_process[i:i+batch_size]
+                tasks = [self._generate_element_narrative(elem, gemini_model) for elem in batch]
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                
+                for j, result in enumerate(results):
+                    elem = batch[j]
+                    if isinstance(result, Exception):
+                        logger.error(f"Gemini execution failed for {elem.code}: {result}")
+                        elem.narrative = self._format_raw_notes(elem)
+                    else:
+                        elem.narrative = result
+                        
+                # Ensure condition rating default logic
+                for elem in batch:
+                    if elem.condition_rating == ConditionRating.NI and elem.raw_notes:
+                        elem.condition_rating = ConditionRating.GREEN
+        else:
+            for elem in elements_to_process:
                 elem.narrative = self._format_raw_notes(elem)
-            
-            # If no condition rating set, default to 1
-            if elem.condition_rating == ConditionRating.NI and elem.raw_notes:
-                elem.condition_rating = ConditionRating.GREEN
+                if elem.condition_rating == ConditionRating.NI and elem.raw_notes:
+                    elem.condition_rating = ConditionRating.GREEN
         
         logger.info("Narratives generated for all elements")
 

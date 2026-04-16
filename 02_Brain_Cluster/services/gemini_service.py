@@ -45,36 +45,34 @@ class GeminiService:
         Multimodal Analysis using Legacy SDK (Works with Gemini 3).
         """
         contents = []
+        uploaded_files = []
         
-        # 1. Add Text Prompt
-        contents.append(prompt_text)
-        
-        # 2. Add Images (PIL or Path)
-        for path in images_paths:
-            if os.path.exists(path):
-                try:
-                    # Legacy SDK handles paths directly? No, usually PIL images or File API.
-                    # Best practice for Legacy SDK: Upload to File API or use PIL.
-                    # Creating a Part from bytes is tricky in legacy high-level API.
-                    # We will use the File API for robustness with Large contexts.
-                    f = genai.upload_file(path)
-                    contents.append(f)
-                    logger.info(f"Uploaded image: {path} -> {f.uri}")
-                except Exception as e:
-                    logger.error(f"Failed to load image {path}: {e}")
-        
-        # 3. Add Audio
-        if audio_path and os.path.exists(audio_path):
-            try:
-                # Upload audio to File API
-                f = genai.upload_file(audio_path)
-                contents.append(f)
-                logger.info(f"Uploaded audio: {audio_path} -> {f.uri}")
-            except Exception as e:
-                logger.error(f"Failed to load audio {audio_path}: {e}")
-        
-        # 4. Generate Content
         try:
+            # 1. Add Text Prompt
+            contents.append(prompt_text)
+            
+            # 2. Add Images (PIL or Path)
+            for path in images_paths:
+                if os.path.exists(path):
+                    try:
+                        f = genai.upload_file(path)
+                        contents.append(f)
+                        uploaded_files.append(f)
+                        logger.info(f"Uploaded image: {path} -> {f.uri}")
+                    except Exception as e:
+                        logger.error(f"Failed to load image {path}: {e}")
+            
+            # 3. Add Audio
+            if audio_path and os.path.exists(audio_path):
+                try:
+                    f = genai.upload_file(audio_path)
+                    contents.append(f)
+                    uploaded_files.append(f)
+                    logger.info(f"Uploaded audio: {audio_path} -> {f.uri}")
+                except Exception as e:
+                    logger.error(f"Failed to load audio {audio_path}: {e}")
+            
+            # 4. Generate Content
             logger.info(f"Sending payload to {self.MODEL_NAME}...")
             
             config = genai.GenerationConfig(
@@ -94,6 +92,14 @@ class GeminiService:
         except Exception as e:
             logger.error(f"Gemini Generation Error: {e}")
             return '{"error": "AI Processing Failed", "details": "' + str(e) + '"}'
+        finally:
+            # Prevent Google File Storage Leak
+            for f in uploaded_files:
+                try:
+                    genai.delete_file(f.name)
+                    logger.info(f"Cleaned up file from Gemini API: {f.name}")
+                except Exception as cleanup_err:
+                    logger.warning(f"Failed to clean up file {f.name}: {cleanup_err}")
 
 # Singleton Accessor
 def get_gemini_service():

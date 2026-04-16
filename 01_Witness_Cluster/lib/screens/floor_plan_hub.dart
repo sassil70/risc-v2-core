@@ -38,7 +38,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
   
   // Reports tab state
   String? _expandedRoomId;
-  bool _isRecordingAmendment = false;
+  final bool _isRecordingAmendment = false;
   StreamSubscription? _queueSub;
 
   static const int maxInspections = 3;
@@ -92,11 +92,12 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
           });
         }
       } else {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _rooms = [];
             _isLoading = false;
           });
+        }
       }
     } catch (e) {
       if (mounted && _isLoading) setState(() => _isLoading = false);
@@ -292,7 +293,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Type", style: const TextStyle(color: Colors.white70)),
+                const Text("Type", style: TextStyle(color: Colors.white70)),
                 DropdownButton<String>(
                   value: propertyType,
                   dropdownColor: const Color(0xFF2C2C2C),
@@ -501,7 +502,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
                                 color: gold.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.location_city, color: gold),
+                              child: const Icon(Icons.location_city, color: gold),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -839,7 +840,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
               padding: const EdgeInsets.only(top: 80),
               child: Column(
                 children: [
-                  Icon(Icons.description_outlined, size: 64, color: Colors.white12),
+                  const Icon(Icons.description_outlined, size: 64, color: Colors.white12),
                   const SizedBox(height: 16),
                   Text(
                     'No rooms with evidence yet.\nInspect some rooms first!',
@@ -1066,7 +1067,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
                                 }
                               },
                             ),
-                            Divider(
+                            const Divider(
                                 color: Colors.white10,
                                 height: 1,
                                 indent: 44),
@@ -1092,7 +1093,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
                                 }
                               },
                             ),
-                            Divider(
+                            const Divider(
                                 color: Colors.white10,
                                 height: 1,
                                 indent: 44),
@@ -1123,7 +1124,7 @@ class _FloorPlanHubScreenState extends State<FloorPlanHubScreen>
                                     }
                                   : null,
                             ),
-                            Divider(
+                            const Divider(
                                 color: Colors.white10,
                                 height: 1,
                                 indent: 44),

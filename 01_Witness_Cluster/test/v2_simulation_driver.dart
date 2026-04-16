@@ -86,17 +86,17 @@ class MockSecureStorage implements FlutterSecureStorage {
 
   // Boilerplate to satisfy interface
   @override
-  AndroidOptions get aOptions => AndroidOptions();
+  AndroidOptions get aOptions => const AndroidOptions();
   @override
-  IOSOptions get iOptions => IOSOptions();
+  IOSOptions get iOptions => const IOSOptions();
   @override
-  LinuxOptions get lOptions => LinuxOptions();
+  LinuxOptions get lOptions => const LinuxOptions();
   @override
-  MacOsOptions get mOptions => MacOsOptions();
+  MacOsOptions get mOptions => const MacOsOptions();
   @override
-  WindowsOptions get wOptions => WindowsOptions();
+  WindowsOptions get wOptions => const WindowsOptions();
   @override
-  WebOptions get webOptions => WebOptions();
+  WebOptions get webOptions => const WebOptions();
 
   @override
   void registerListener({

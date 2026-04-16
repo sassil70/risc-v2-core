@@ -33,9 +33,17 @@ class AuthService {
     'surveyor': 'risc2026',
   };
 
+  // Legacy passwords (backward compatibility for field surveyors)
+  static const _legacyPasswords = {
+    'admin': 'admin123',
+    'surveyor': 'surveyor123',
+  };
+
   Map<String, dynamic>? _tryDemoLogin(String username, String password) {
     final expectedPwd = _demoCredentials[username.toLowerCase()];
-    if (expectedPwd != null && expectedPwd == password) {
+    final legacyPwd = _legacyPasswords[username.toLowerCase()];
+    if ((expectedPwd != null && expectedPwd == password) ||
+        (legacyPwd != null && legacyPwd == password)) {
       return {
         'id': 'demo-${username.toLowerCase()}-001',
         'username': username.toLowerCase(),

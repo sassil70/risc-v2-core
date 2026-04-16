@@ -111,7 +111,7 @@ class _EvidenceGalleryScreenState extends State<EvidenceGalleryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final gold = const Color(0xFFFFD700);
+    const gold = Color(0xFFFFD700);
     final excludedCount = _excludedPhotos.length;
 
     return Scaffold(
@@ -162,13 +162,13 @@ class _EvidenceGalleryScreenState extends State<EvidenceGalleryScreen>
             ),
           ),
           if (_isLoading)
-            Center(child: CircularProgressIndicator(color: gold))
+            const Center(child: CircularProgressIndicator(color: gold))
           else if (_contexts.isEmpty)
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.image_not_supported,
+                  const Icon(Icons.image_not_supported,
                       size: 64, color: Colors.white12),
                   const SizedBox(height: 16),
                   Text(

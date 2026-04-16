@@ -202,10 +202,10 @@ class _ReportsHubScreenState extends ConsumerState<ReportsHubScreen>
 
   @override
   Widget build(BuildContext context) {
-    final gold = const Color(0xFFFFD700);
+    const gold = Color(0xFFFFD700);
 
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator(color: gold));
+      return const Center(child: CircularProgressIndicator(color: gold));
     }
 
     return Column(

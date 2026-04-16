@@ -418,7 +418,7 @@ class _FinalReportTabState extends State<FinalReportTab>
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [purple, purpleLight],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -599,7 +599,7 @@ class _FinalReportTabState extends State<FinalReportTab>
               ),
               child: Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
@@ -810,7 +810,7 @@ class _FinalReportTabState extends State<FinalReportTab>
       ),
       child: Row(
         children: [
-          Icon(Icons.rate_review, color: gold, size: 24),
+          const Icon(Icons.rate_review, color: gold, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1117,7 +1117,7 @@ class _FinalReportTabState extends State<FinalReportTab>
               child: _buildActionBtn(
                 icon: Icons.edit_document,
                 label: 'EDIT SECTIONS',
-                color: Color(0xFF2D8CFF),
+                color: const Color(0xFF2D8CFF),
                 onTap: () => _openSectionEditor(),
               ),
             ),
@@ -1140,7 +1140,7 @@ class _FinalReportTabState extends State<FinalReportTab>
               child: _buildActionBtn(
                 icon: Icons.photo_library,
                 label: 'REORDER PHOTOS',
-                color: Color(0xFF00BCD4),
+                color: const Color(0xFF00BCD4),
                 onTap: () => _openPhotoReorder(),
               ),
             ),
@@ -2315,7 +2315,7 @@ class _PhotoReorderSheetState extends State<_PhotoReorderSheet> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.photo_camera_outlined, color: textSecondary, size: 48),
+                            const Icon(Icons.photo_camera_outlined, color: textSecondary, size: 48),
                             const SizedBox(height: 16),
                             Text(
                               'No photos found',

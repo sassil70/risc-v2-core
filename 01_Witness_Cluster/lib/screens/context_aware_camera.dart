@@ -131,9 +131,9 @@ class _ContextAwareCameraScreenState extends State<ContextAwareCameraScreen>
       setState(() {
         data.forEach((k, v) => _ricsMatrix[k] = List<String>.from(v));
         String type = widget.roomType.toLowerCase();
-        if (type.contains('kitchen'))
+        if (type.contains('kitchen')) {
           type = 'kitchen';
-        else if (type.contains('bath') ||
+        } else if (type.contains('bath') ||
             type.contains('ensuite') ||
             type.contains('wc'))
           type = 'wet_room';
@@ -158,9 +158,10 @@ class _ContextAwareCameraScreenState extends State<ContextAwareCameraScreen>
       setState(() {});
     } catch (e) {
       print("Camera Init Error: $e");
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Camera Error: $e")));
+      }
     }
   }
 
@@ -953,7 +954,7 @@ class _ContextAwareCameraScreenState extends State<ContextAwareCameraScreen>
                         padding: const EdgeInsets.only(bottom: 10, top: 10),
                         child: Text(
                           _serverPhotoCountForContext > 0
-                              ? "Photos: ${_serverPhotoCountForContext + _currentContextPhotos.length} (${_serverPhotoCountForContext} synced + ${_currentContextPhotos.length} new)"
+                              ? "Photos: ${_serverPhotoCountForContext + _currentContextPhotos.length} ($_serverPhotoCountForContext synced + ${_currentContextPhotos.length} new)"
                               : "Photos: ${_currentContextPhotos.length} / 3 Required",
                           style: TextStyle(
                             color: (_serverPhotoCountForContext + _currentContextPhotos.length) >= 3

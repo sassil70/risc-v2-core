@@ -187,7 +187,71 @@ async def lifespan(app):
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
             )
         """)
-        print("[STARTUP] Tables verified OK")
+        print("[STARTUP] Tables verified OK (auth)")
+        # === AUTO-CREATE ALL CORE TABLES (projects, sessions, media_assets) ===
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS projects (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                reference_number VARCHAR(50) UNIQUE NOT NULL,
+                client_name VARCHAR(100),
+                site_metadata JSONB DEFAULT '{}',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                status VARCHAR(20) DEFAULT 'active',
+                approval_status VARCHAR(20) DEFAULT 'pending',
+                address TEXT,
+                total_photos INTEGER DEFAULT 0,
+                total_elements INTEGER DEFAULT 0,
+                total_sessions INTEGER DEFAULT 0,
+                urgent_count INTEGER DEFAULT 0,
+                attention_count INTEGER DEFAULT 0,
+                surveyor_name VARCHAR(200),
+                surveyor_id UUID,
+                latest_version VARCHAR(100),
+                rics_number VARCHAR(100),
+                inspection_date DATE,
+                report_date DATE,
+                property_type VARCHAR(100)
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                id VARCHAR(100) PRIMARY KEY,
+                project_id UUID,
+                surveyor_id UUID,
+                title VARCHAR(255),
+                status VARCHAR(50),
+                data JSONB DEFAULT '{}',
+                started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                closed_at TIMESTAMP WITH TIME ZONE,
+                is_locked BOOLEAN DEFAULT FALSE
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS media_assets (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                session_id VARCHAR(100),
+                file_path VARCHAR(255) NOT NULL,
+                file_hash VARCHAR(64) NOT NULL,
+                asset_type VARCHAR(20) NOT NULL,
+                captured_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                room_tag VARCHAR(100),
+                element_tag VARCHAR(100)
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS immutable_audit_log (
+                id BIGSERIAL PRIMARY KEY,
+                table_name VARCHAR(50) NOT NULL,
+                record_id TEXT NOT NULL,
+                operation VARCHAR(10) NOT NULL,
+                old_value JSONB,
+                new_value JSONB,
+                changed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                changed_by VARCHAR(50)
+            )
+        """)
+        print("[STARTUP] ✅ All core tables verified OK (projects, sessions, media_assets, audit)")
+        # === END TABLE AUTO-CREATE ===
         # Seed demo users
         for username, password, fullname, role in [
             ("demo", "demo1234", "Apple Review Demo Account", "surveyor"),

@@ -125,7 +125,10 @@ async def generate_pdf_playwright(
 
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+            browser = await p.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            )
             page = await browser.new_page()
 
             # Load HTML file (file:// allows local resource access)

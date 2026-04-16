@@ -57,8 +57,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    final midnight = const Color(0xFF05080D);
-    final gold = const Color(0xFFFFD700);
+    const midnight = Color(0xFF05080D);
+    const gold = Color(0xFFFFD700);
 
     return DefaultTabController(
       length: 2,
@@ -71,11 +71,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             Positioned.fill(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: RadialGradient(
                     center: Alignment.topLeft,
                     radius: 1.5,
-                    colors: [const Color(0xFF0F172A), const Color(0xFF020408)],
+                    colors: [Color(0xFF0F172A), Color(0xFF020408)],
                   ),
                 ),
               ),

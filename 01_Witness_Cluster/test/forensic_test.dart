@@ -26,7 +26,7 @@ void main() {
   });
   
   test('Package Signature consistency', () {
-      final manifest = '{"file": "abc.jpg"}';
+      const manifest = '{"file": "abc.jpg"}';
       final sig1 = ForensicUtils.generatePackageSignature(manifest);
       final sig2 = ForensicUtils.generatePackageSignature(manifest);
       expect(sig1, equals(sig2));
