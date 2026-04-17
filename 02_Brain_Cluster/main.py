@@ -1,4 +1,3 @@
-from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, HTTPException, Depends, Header, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -12,17 +11,16 @@ import json
 from database import db
 from forensic import ForensicValidator
 from architect import generate_floor_plan
-from routers import auth, briefing, sessions, reports, projects, dashboard, downloads
+from routers import auth, briefing, sessions, reports, projects
 
 app = FastAPI(title="RISC V2 Brain - Sync Engine")
 
-# [PRODUCTION] CORS — configurable via env var, restrictive by default
-_cors_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+# [NEW] Enable CORS for Frontend (Reporter Cluster) + Mobile App
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in _cors_origins],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_origins=["*"],  # [FIX] Allow all origins — required for iOS TestFlight + LAN mobile access
+    allow_credentials=False,  # Must be False when allow_origins=["*"]
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -61,8 +59,6 @@ app.include_router(briefing.router, prefix="/api", tags=["Briefing"])
 app.include_router(sessions.router, prefix="/api", tags=["Sessions"])
 app.include_router(reports.router, prefix="/api", tags=["Reports"])
 app.include_router(projects.router, prefix="/api", tags=["Projects"])
-app.include_router(dashboard.router, prefix="/api", tags=["Dashboard"])
-app.include_router(downloads.router, prefix="/api", tags=["Downloads"])
 
 # [LAB FIX] Ensure Forensic Endpoint is reachable and DB constraints are honored
 from forensic_engine import analyze_session
@@ -84,7 +80,7 @@ async def run_forensic_analysis_lab(session_id: str):
         raise HTTPException(status_code=404, detail=f"Session Data Not Found at {session_dir}")
         
     with open(init_file, 'r') as f: data = json.load(f)
-    logger.info(f"Analyzing Session {session_id} in {session_dir}")
+    print(f"DEBUG: Analyzing Session {session_id} in {session_dir}")
     report = await analyze_session(session_id, data)
     report_path = os.path.join(session_dir, "forensic_report_v1.json")
     with open(report_path, "w", encoding="utf-8") as f: json.dump(report, f, indent=2)
@@ -103,40 +99,6 @@ storage_service = StorageService(STORAGE_ROOT)
 from fastapi.staticfiles import StaticFiles
 app.mount("/storage", StaticFiles(directory=STORAGE_ROOT), name="storage")
 
-# Serve static files (report editor, etc.)
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-if os.path.exists(static_dir):
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
-
-# Web Report Editor route
-from fastapi.responses import HTMLResponse
-@app.get("/editor", response_class=HTMLResponse)
-async def report_editor():
-    """Serve the web-based RICS Report Editor."""
-    editor_path = os.path.join(static_dir, "report_editor.html")
-    if os.path.exists(editor_path):
-        with open(editor_path) as f:
-            return HTMLResponse(content=f.read())
-    return HTMLResponse(content="<h1>Editor not found</h1>", status_code=404)
-
-@app.get("/login", response_class=HTMLResponse)
-async def login_page():
-    """Serve the login page."""
-    path = os.path.join(static_dir, "login.html")
-    if os.path.exists(path):
-        with open(path) as f:
-            return HTMLResponse(content=f.read())
-    return HTMLResponse(content="<h1>Login page not found</h1>", status_code=404)
-
-@app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard_page():
-    """Serve the Surveyor Dashboard SPA."""
-    path = os.path.join(static_dir, "dashboard.html")
-    if os.path.exists(path):
-        with open(path) as f:
-            return HTMLResponse(content=f.read())
-    return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
-
 # Storage for temporary packages
 UPLOAD_DIR = os.path.join(STORAGE_ROOT, "temp_packages")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -154,126 +116,14 @@ class LogEntry(BaseModel):
     timestamp: str
     session_id: Optional[str] = None
 
-# --- Lifecycle (modern lifespan pattern) ---
-@asynccontextmanager
-async def lifespan(app):
+# --- Lifecycle ---
+@app.on_event("startup")
+async def startup():
     await db.connect()
-    # Auto-seed demo users on startup (safe — uses ON CONFLICT DO NOTHING)
-    try:
-        from core.security import get_password_hash
-        # Ensure UUID extension exists
-        try:
-            await db.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-            print("[STARTUP] uuid-ossp extension ready")
-        except Exception as ext_err:
-            print(f"[STARTUP-WARN] uuid-ossp: {ext_err}")
-        # Ensure users table exists (gen_random_uuid works on PG 13+)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                username VARCHAR(100) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                full_name VARCHAR(200),
-                role VARCHAR(50) DEFAULT 'surveyor',
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-            )
-        """)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS access_events (
-                id BIGSERIAL PRIMARY KEY,
-                user_id UUID NOT NULL,
-                event_type VARCHAR(50) NOT NULL,
-                metadata JSONB DEFAULT '{}',
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-            )
-        """)
-        print("[STARTUP] Tables verified OK (auth)")
-        # === AUTO-CREATE ALL CORE TABLES (projects, sessions, media_assets) ===
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS projects (
-                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                reference_number VARCHAR(50) UNIQUE NOT NULL,
-                client_name VARCHAR(100),
-                site_metadata JSONB DEFAULT '{}',
-                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-                status VARCHAR(20) DEFAULT 'active',
-                approval_status VARCHAR(20) DEFAULT 'pending',
-                address TEXT,
-                total_photos INTEGER DEFAULT 0,
-                total_elements INTEGER DEFAULT 0,
-                total_sessions INTEGER DEFAULT 0,
-                urgent_count INTEGER DEFAULT 0,
-                attention_count INTEGER DEFAULT 0,
-                surveyor_name VARCHAR(200),
-                surveyor_id UUID,
-                latest_version VARCHAR(100),
-                rics_number VARCHAR(100),
-                inspection_date DATE,
-                report_date DATE,
-                property_type VARCHAR(100)
-            )
-        """)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS sessions (
-                id VARCHAR(100) PRIMARY KEY,
-                project_id UUID,
-                surveyor_id UUID,
-                title VARCHAR(255),
-                status VARCHAR(50),
-                data JSONB DEFAULT '{}',
-                started_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-                closed_at TIMESTAMP WITH TIME ZONE,
-                is_locked BOOLEAN DEFAULT FALSE
-            )
-        """)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS media_assets (
-                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                session_id VARCHAR(100),
-                file_path VARCHAR(255) NOT NULL,
-                file_hash VARCHAR(64) NOT NULL,
-                asset_type VARCHAR(20) NOT NULL,
-                captured_at TIMESTAMP WITH TIME ZONE NOT NULL,
-                room_tag VARCHAR(100),
-                element_tag VARCHAR(100)
-            )
-        """)
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS immutable_audit_log (
-                id BIGSERIAL PRIMARY KEY,
-                table_name VARCHAR(50) NOT NULL,
-                record_id TEXT NOT NULL,
-                operation VARCHAR(10) NOT NULL,
-                old_value JSONB,
-                new_value JSONB,
-                changed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-                changed_by VARCHAR(50)
-            )
-        """)
-        print("[STARTUP] ✅ All core tables verified OK (projects, sessions, media_assets, audit)")
-        # === END TABLE AUTO-CREATE ===
-        # Seed demo users
-        for username, password, fullname, role in [
-            ("demo", "demo1234", "Apple Review Demo Account", "surveyor"),
-            ("admin", "risc2026", "System Administrator", "admin"),
-            ("surveyor", "risc2026", "RICS Surveyor", "surveyor"),
-        ]:
-            pw_hash = get_password_hash(password)
-            await db.execute("""
-                INSERT INTO users (username, password_hash, full_name, role)
-                VALUES ($1, $2, $3, $4)
-                ON CONFLICT (username) DO NOTHING
-            """, username, pw_hash, fullname, role)
-        count = await db.fetchval("SELECT COUNT(*) FROM users")
-        print(f"[STARTUP] ✅ Users seeded. Total users: {count}")
-    except Exception as e:
-        import traceback
-        print(f"[STARTUP-ERROR] ❌ Auto-seed FAILED: {e}")
-        print(traceback.format_exc())
-    yield
-    await db.disconnect()
 
-app.router.lifespan_context = lifespan
+@app.on_event("shutdown")
+async def shutdown():
+    await db.disconnect()
 
 # --- Endpoints ---
 
@@ -317,17 +167,27 @@ async def start_session(data: dict):
     Updates DB Status to 'active'.
     """
     session_id = data.get('session_id') or str(uuid.uuid4())
-    user_id = data.get('user_id', '00000000-0000-0000-0000-000000000000')
-    if len(user_id) != 36:
-        user_id = '00000000-0000-0000-0000-000000000000'
-        
-    property_id = data.get('property_id', 'unknown_prop')
+    raw_user_id = data.get('user_id', 'anonymous')
+    raw_property_id = data.get('property_id', 'unknown_prop')
+    
+    # [FIX] Sanitize IDs to valid UUID format before any DB operation
+    RISC_NS = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
+    def _safe_uuid(v):
+        try:
+            uuid.UUID(str(v))
+            return str(v)
+        except (ValueError, AttributeError):
+            safe = str(uuid.uuid5(RISC_NS, str(v)))
+            print(f"[UUID-FIX] '{v}' to '{safe}'")
+            return safe
+    
+    user_id = _safe_uuid(raw_user_id)
+    property_id = _safe_uuid(raw_property_id)
     
     try:
-        # Verify project exists — do NOT auto-create fake data in production
-        existing = await db.fetchrow("SELECT id FROM projects WHERE id = $1", property_id)
-        if not existing:
-            print(f"⚠️ Project {property_id} not found in DB — session will proceed without FK link")
+
+        # Ensure project exists to avoid FK error in the lab
+        await db.execute("INSERT INTO projects (id, reference_number) VALUES ($1, 'LAB-MOCK-001') ON CONFLICT (id) DO NOTHING", property_id)
         
         # UPSERT session
         await db.execute("""
@@ -434,24 +294,10 @@ async def upload_room_evidence(
     
     try:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            names = zip_ref.namelist()
-            zip_size = os.path.getsize(zip_path)
-            print(f"📦 ZIP Debug: size={zip_size} bytes, entries={len(names)}")
-            for n in names[:20]:
-                info = zip_ref.getinfo(n)
-                print(f"   📎 {n} ({info.file_size} bytes)")
             zip_ref.extractall(unpack_dir)
-        # List what was actually extracted
-        extracted = []
-        for root, dirs, files in os.walk(unpack_dir):
-            for f in files:
-                full = os.path.join(root, f)
-                extracted.append(full)
-        print(f"📦 Unpacked Evidence: {room_id} -> {unpack_dir} ({len(extracted)} files extracted)")
-        for ef in extracted[:10]:
-            print(f"   ✅ {ef}")
+        print(f"📦 Unpacked Evidence: {room_id} -> {unpack_dir}")
         os.remove(zip_path)
-        return {"status": "synced", "room_id": room_id, "files_extracted": len(extracted)}
+        return {"status": "synced", "room_id": room_id}
     except zipfile.BadZipFile:
         raise HTTPException(status_code=400, detail="Corrupt Zip File")
     except Exception as e:
@@ -489,97 +335,25 @@ async def check_inspection_status(session_id: str):
         with open(init_file, "r") as f:
             data = json.load(f)
         
-        # Ensure floor_plan structure exists
-        if "floor_plan" not in data:
-            data["floor_plan"] = {"rooms": []}
-        if "rooms" not in data["floor_plan"]:
-            data["floor_plan"]["rooms"] = []
-        
-        rooms = data["floor_plan"]["rooms"]
-        
-        # === CRITICAL FIX: Bridge the DB-Filesystem Gap ===
-        # If rooms are empty in the JSON file, fetch them from PostgreSQL
-        # because addRoomToProject writes to DB, not to this file.
-        if len(rooms) == 0 and property_id != "unknown":
-            try:
-                db_row = await db.fetchrow(
-                    "SELECT site_metadata FROM projects WHERE id = $1", property_id
-                )
-                if db_row and db_row['site_metadata']:
-                    db_meta = db_row['site_metadata'] if isinstance(db_row['site_metadata'], dict) else json.loads(db_row['site_metadata'])
-                    if 'rooms' in db_meta and len(db_meta['rooms']) > 0:
-                        rooms = db_meta['rooms']
-                        data["floor_plan"]["rooms"] = rooms
-                        # Sync back to disk so future reads are fast
-                        try:
-                            with open(init_file, "w") as fw:
-                                json.dump(data, fw, indent=2, default=str)
-                            print(f"[SYNC] Wrote {len(rooms)} rooms from DB back to session_init.json")
-                        except Exception as sync_err:
-                            print(f"[SYNC-WARN] Could not write back: {sync_err}")
-            except Exception as db_err:
-                print(f"[DB-FALLBACK-ERR] {db_err}")
-        # === END CRITICAL FIX ===
-        
-        if len(rooms) > 0:
-            # Collect ALL session directories for this project to find evidence
-            # (uploads may be in a different session than the current one)
-            all_session_dirs = [session_dir]
-            if property_id != "unknown":
-                try:
-                    project_folder = os.path.dirname(session_dir)
-                    # Also check parent dir for sibling session folders
-                    if os.path.exists(project_folder):
-                        for entry in os.listdir(project_folder):
-                            full = os.path.join(project_folder, entry)
-                            if os.path.isdir(full) and "_Session_" in entry and full != session_dir:
-                                all_session_dirs.append(full)
-                except Exception:
-                    pass
-            
+        if "floor_plan" in data and "rooms" in data["floor_plan"]:
+            rooms = data["floor_plan"]["rooms"]
             complete_count = 0
             for room in rooms:
                 r_id = room.get("id")
-                if not r_id:
-                    room["status"] = "pending"
-                    room["images_count"] = 0
-                    room["audio_count"] = 0
-                    continue
-                
+                room_path = os.path.join(session_dir, r_id)
                 image_count = 0
                 audio_count = 0
-                contexts_found = set()
-                
-                # Scan ALL session dirs for this room's files
-                for s_dir in all_session_dirs:
-                    room_path = os.path.join(s_dir, r_id)
-                    if os.path.exists(room_path):
-                        for root, dirs, files in os.walk(room_path):
-                            # Track which contexts have data
-                            folder_name = os.path.basename(root)
-                            if folder_name.startswith("Context_"):
-                                has_files = False
-                                for file in files:
-                                    lower_f = file.lower()
-                                    if lower_f.endswith((".jpg", ".jpeg", ".png")):
-                                        image_count += 1
-                                        has_files = True
-                                    elif lower_f.endswith((".m4a", ".mp3", ".wav", ".aac", ".opus")):
-                                        audio_count += 1
-                                        has_files = True
-                                if has_files:
-                                    contexts_found.add(folder_name.replace("Context_", "").replace("_", " "))
-                            else:
-                                for file in files:
-                                    lower_f = file.lower()
-                                    if lower_f.endswith((".jpg", ".jpeg", ".png")):
-                                        image_count += 1
-                                    elif lower_f.endswith((".m4a", ".mp3", ".wav", ".aac", ".opus")):
-                                        audio_count += 1
+                if os.path.exists(room_path):
+                    for root, dirs, files in os.walk(room_path):
+                        for file in files:
+                            lower_f = file.lower()
+                            if lower_f.endswith((".jpg", ".jpeg", ".png")):
+                                image_count += 1
+                            elif lower_f.endswith((".m4a", ".mp3", ".wav")):
+                                audio_count += 1
                 
                 room["images_count"] = image_count
                 room["audio_count"] = audio_count
-                room["inspected_contexts"] = list(contexts_found)
                 if image_count >= 1:
                     room["status"] = "completed" if image_count >= 3 else "in_progress"
                     if image_count >= 3:
