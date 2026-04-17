@@ -9,6 +9,19 @@ import os
 
 router = APIRouter()
 
+# [CRITICAL FIX] UUID Sanitizer — converts non-UUID strings to deterministic UUIDs
+RISC_NS = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
+def _safe_uuid(v):
+    """Convert any string to a valid UUID. If already UUID, return as-is."""
+    try:
+        uuid.UUID(str(v))
+        return str(v)
+    except (ValueError, AttributeError):
+        safe = str(uuid.uuid5(RISC_NS, str(v)))
+        print(f"[UUID-FIX] '{v}' → '{safe}'")
+        return safe
+
+
 from services.storage_service import get_storage_service
 
 # --- Storage Logic ---
@@ -159,7 +172,7 @@ async def create_session(session: SessionCreate):
             WHERE surveyor_id = $1 AND project_id = $2 AND status IN ('pending', 'active')
             ORDER BY started_at DESC LIMIT 1
         """
-        existing_row = await db.fetchrow(check_active_query, session.surveyor_id, session.project_id)
+        existing_row = await db.fetchrow(check_active_query, _safe_uuid(session.surveyor_id), _safe_uuid(session.project_id))
         if existing_row:
             result = dict(existing_row)
             result['id'] = str(result['id'])
@@ -178,7 +191,7 @@ async def create_session(session: SessionCreate):
     
     # Check for identical titles
     check_query = "SELECT title FROM sessions WHERE surveyor_id = $1 AND title ILIKE $2"
-    existing_titles_rows = await db.fetch(check_query, session.surveyor_id, f"{base_title}%")
+    existing_titles_rows = await db.fetch(check_query, _safe_uuid(session.surveyor_id), f"{base_title}%")
     existing_titles = [r['title'] for r in existing_titles_rows]
     
     if base_title in existing_titles:
@@ -202,8 +215,8 @@ async def create_session(session: SessionCreate):
             query, 
             session_id, 
             final_title, 
-            session.surveyor_id, 
-            session.project_id
+            _safe_uuid(session.surveyor_id), 
+            _safe_uuid(session.project_id)
         )
         result = dict(row)
         result['id'] = str(result['id'])
